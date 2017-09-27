@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,12 +24,12 @@ namespace GameEditor{
 	/// </summary>
 	public partial class MapEditorControl : UserControl{
 		public bool IsDirty{ get; set; }
-		private GameMap map{ get; set; }
+		private GameMap Map{ get; set; }
 
 		private NodeGrid _mapGrid;
 
 		public ObservableCollection<Tile> TerrainTiles{ get; set; }
-
+		public ObservableCollection<Tile> LogicTiles{ get; set; }
 
 		public MapEditorControl(){
 			InitializeComponent();
@@ -36,8 +38,9 @@ namespace GameEditor{
 			var tileManager = new TileManager();
 
 			TerrainTiles = new ObservableCollection<Tile>(tileManager.TerrainTiles.Values);
+			LogicTiles = new ObservableCollection<Tile>(tileManager.LogicTiles.Values);
 
-			map = new GameMap(16, 16);
+			Map = new GameMap(16, 16);
 			ViewMapGrid.Rows = ViewMapGrid.Columns = 16;
 			ViewLogicGrid.Rows = ViewLogicGrid.Columns = 16;
 
@@ -110,6 +113,16 @@ namespace GameEditor{
 			_mapGrid.Reset();
 			CvsMapGrid.Children.Clear();
 			DrawGrid(_mapGrid, Colors.Blue);
+		}
+
+
+		private void TilesListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e){
+			var lb = sender as ListBox;
+			Tile selected = (Tile)lb?.SelectedItem;
+			ImgSelectedTile.Source = selected?.TileImage;
+//			SelectedTile = selected;
+//			Console.WriteLine($@"Selected: {SelectedTile?.Name}");
+			Console.WriteLine($@"Selected: {selected?.Name}");
 		}
 	}
 }
