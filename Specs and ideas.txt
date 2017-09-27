@@ -1,0 +1,27 @@
+Map
+Tile[,] tiles
+Enemy[] enemies
+int[,] playerStartPos
+string Name
+string tileSheetPath
+
+
+Tile
+int type
+bool collidable
+bool isTrigger
+int[,] tileSheetPos
+
+
+Tile implements OnEnterCallback
+
+
+Enemy
+
+
+
+
+
+Logic for each tile type has to exist somewhere
+To define logic we need to know the type
+
