@@ -8,27 +8,38 @@ using System.Windows.Media.Imaging;
 
 namespace GameEditor.Resources{
 	public class TileManager{
-		private const string TerrainTilesDirectoryPath = "Resources/tiles";
-		public Dictionary<string, Tile> TerrainTiles{ get; }
+		private const string TerrainTilesDirectoryPath = "Resources/tiles/terrain";
+		private const string LogicTilesDirectoryPath = "Resources/tiles/logic";
+		public Dictionary<string, Tile> TerrainTiles = new Dictionary<string, Tile>();
+		public Dictionary<string, Tile> LogicTiles = new Dictionary<string, Tile>();
 
 		public TileManager(){
-			TerrainTiles = new Dictionary<string, Tile>();
 			LoadTerrainTiles();
+			LoadLogicTiles();
 		}
 
 		private void LoadTerrainTiles(){
-			try{
-				var terrainTilesDir = new DirectoryInfo(TerrainTilesDirectoryPath);
-				terrainTilesDir.GetFiles("*.png")
-				               .ToList()
-				               .ForEach(
-				               file => {
-					               Console.WriteLine($@"Loading {file.Name}...");
-					               var img = new BitmapImage(new Uri(file.FullName));
-					               TerrainTiles[file.Name] = new Tile{ TileImage = img, Name = file.Name };
-				               });
+			LoadTiles(TerrainTilesDirectoryPath, ref TerrainTiles);
+		}
+
+		private void LoadLogicTiles() {
+			LoadTiles(LogicTilesDirectoryPath, ref LogicTiles);
+		}
+
+		private void LoadTiles(string path, ref Dictionary<string, Tile> dict){
+			try {
+				var directory = new DirectoryInfo(path);
+				var fileList = directory.GetFiles("*.png").ToList();
+				foreach(var file in fileList){
+					Console.Write($@"Loading {file.Name}...");
+					var img = new BitmapImage(new Uri(file.FullName));
+					var fileName = Path.GetFileNameWithoutExtension(file.Name);
+					Console.WriteLine($@"{fileName}");
+					dict[fileName] = new Tile { TileImage = img, Name = file.Name };
+				}
+				         
 			}
-			catch(Exception e){
+			catch(Exception e) {
 				Console.WriteLine($@"Could not load terrain tiles: {e.Message}");
 			}
 		}
