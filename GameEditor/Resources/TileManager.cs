@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace GameEditor.Resources{
-	class TileManager{
-		private const string TerrainTilesDirectoryPath = "/Resources/tiles";
+	public class TileManager{
+		private const string TerrainTilesDirectoryPath = "Resources/tiles";
 		public Dictionary<string, Tile> TerrainTiles{ get; }
 
 		public TileManager(){
@@ -18,18 +18,18 @@ namespace GameEditor.Resources{
 
 		private void LoadTerrainTiles(){
 			try{
-				new DirectoryInfo(TerrainTilesDirectoryPath)
-					.GetFiles("*.png")
-					.ToList()
-					.ForEach(
-					file => {
-						var img = new BitmapImage(new Uri(file.FullName));
-						TerrainTiles[file.Name] = new Tile{ Img = img, Name = file.Name };
-					});
+				var terrainTilesDir = new DirectoryInfo(TerrainTilesDirectoryPath);
+				terrainTilesDir.GetFiles("*.png")
+				               .ToList()
+				               .ForEach(
+				               file => {
+					               Console.WriteLine($@"Loading {file.Name}...");
+					               var img = new BitmapImage(new Uri(file.FullName));
+					               TerrainTiles[file.Name] = new Tile{ TileImage = img, Name = file.Name };
+				               });
 			}
 			catch(Exception e){
 				Console.WriteLine($@"Could not load terrain tiles: {e.Message}");
-				throw;
 			}
 		}
 
