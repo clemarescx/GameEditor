@@ -39,14 +39,14 @@ namespace GameEditor{
 			var dataDirPath = Path.Combine(_applicationDirectory, @"data\");
 			Directory.CreateDirectory(dataDirPath);
 
-			var race_db_filepath = Path.Combine(Path.GetDirectoryName(dataDirPath), "races.json");
+			var raceDbFilepath = Path.Combine(Path.GetDirectoryName(dataDirPath), "races.json");
 
-			if(!File.Exists(race_db_filepath)){
-				CreateDefaultRaceDatabase(race_db_filepath);
+			if(!File.Exists(raceDbFilepath)){
+				CreateDefaultRaceDatabase(raceDbFilepath);
 			}
 
 			try{
-				var raceFile = File.ReadAllText(race_db_filepath);
+				var raceFile = File.ReadAllText(raceDbFilepath);
 				var races = JsonConvert.DeserializeObject<string[]>(raceFile);
 				cmbRace.ItemsSource = races;
 				cmbRace.SelectedIndex = 0;
@@ -59,7 +59,7 @@ namespace GameEditor{
 		}
 
 		private void CreateDefaultRaceDatabase(string races_db_filepath){
-			Console.WriteLine("Creating default races.json...");
+			Console.WriteLine(@"Creating default races.json...");
 			// create races.json populated with default hardcoded values
 			var jsonConvertedRaces = JsonConvert.SerializeObject(new[] { "Human", "Elf", "Dwarf", "Orc" });
 			try {
@@ -75,7 +75,7 @@ namespace GameEditor{
 		private void BtnSaveChar(object sender, RoutedEventArgs e){
 
 			if(IsDirty){
-				Console.WriteLine("CONTENT LOADED!!!");
+				Console.WriteLine(@"CONTENT LOADED!!!");
 			}
 
 			_character.Name = txtCreatureName.Text;
