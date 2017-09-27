@@ -2,7 +2,7 @@
 
 namespace GameEditor{
 	public class Tile{
-		public BitmapImage Img{ get; set; }
+		public BitmapImage TileImage{ get; set; }
 		public string Name{ get; set; }
 	}
 }
