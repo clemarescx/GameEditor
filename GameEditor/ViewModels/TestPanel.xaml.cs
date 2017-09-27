@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,72 +14,42 @@ namespace GameEditor{
 	/// Interaction logic for TestPanel.xaml
 	/// </summary>
 	public partial class TestPanel : UserControl{
+		private const int GRID_SIZE = 4;
+
 		public TestPanel(){
 			InitializeComponent();
 
-			createGrid();
-
-			Canvas cvs = new Canvas{
-				Height = 50,
-				Width = 50,
-				HorizontalAlignment = HorizontalAlignment.Left,
-
-			};
-
-			var tilesDirectory = new DirectoryInfo("Resources/tiles");
+			CreateGrid();
 			
-			var files = tilesDirectory.GetFiles("*.png");
-			files.ToList().ForEach(Console.WriteLine);
-			
-			BitmapImage imgSrc = new BitmapImage( new Uri("/Resources/default.png", UriKind.Relative));
-			BitmapImage imgSrc2 = new BitmapImage( new Uri("/Resources/bush.png", UriKind.Relative));
+			var dir = new DirectoryInfo("Resources/tiles/terrain");
+			var imgFileList = dir.GetFiles("*.png");
+			var imgList = imgFileList.ToList().Select(x => new BitmapImage(new Uri(x.FullName)));
+			var imgListIterator = imgList.GetEnumerator();
 
-			Image img = new Image{
-				//				Width = 50,
-				//				Height = 50,
-				Stretch = Stretch.Fill,
-				Source = imgSrc
-			};
-
-			Grid.SetRow(img, 0);
-			Grid.SetColumn(img, 0);
-
-			TestGrid.Children.Add(img);
-
-			Image img2 = new Image{
-				//				Width = 50,
-				//				Height = 50,
-				Stretch = Stretch.Fill,
-				Source = imgSrc2
-			};
-
-			Grid.SetRow(img2, 0);
-			Grid.SetColumn(img2, 1);
-			TestGrid.Children.Add(img2);
-
-
+			bool hasNextTile = true;
+			imgListIterator.MoveNext();
+			for(int i = 0; i < GRID_SIZE && hasNextTile; i++){
+				for(int j = 0; j < GRID_SIZE && hasNextTile; j++){
+					var currImg = new Image{
+						Stretch = Stretch.Fill,
+						Source = imgListIterator.Current
+					};
+					Grid.SetRow(currImg, i);
+					Grid.SetColumn(currImg, j);
+					TestGrid.Children.Add(currImg);
+					hasNextTile = imgListIterator.MoveNext();
+				}
+			}
+			imgListIterator.Dispose();
 		}
 
-		private void createGrid(){
+		private void CreateGrid(){
 			TestGrid.ShowGridLines = true;
-			var coldef1 = new ColumnDefinition{ Width = new GridLength(3, GridUnitType.Star) };
-			var coldef2 = new ColumnDefinition{ Width = new GridLength(3, GridUnitType.Star) };
-			var coldef3 = new ColumnDefinition{ Width = new GridLength(3, GridUnitType.Star) };
-			var coldef4 = new ColumnDefinition{ Width = new GridLength(3, GridUnitType.Star) };
-			TestGrid.ColumnDefinitions.Add(coldef1);
-			TestGrid.ColumnDefinitions.Add(coldef2);
-			TestGrid.ColumnDefinitions.Add(coldef3);
-			TestGrid.ColumnDefinitions.Add(coldef4);
-
-			var rowdef1 = new RowDefinition{ Height = new GridLength(3, GridUnitType.Star) };
-			var rowdef2 = new RowDefinition{ Height = new GridLength(3, GridUnitType.Star) };
-			var rowdef3 = new RowDefinition{ Height = new GridLength(3, GridUnitType.Star) };
-			var rowdef4 = new RowDefinition{ Height = new GridLength(3, GridUnitType.Star) };
-
-			TestGrid.RowDefinitions.Add(rowdef1);
-			TestGrid.RowDefinitions.Add(rowdef2);
-			TestGrid.RowDefinitions.Add(rowdef3);
-			TestGrid.RowDefinitions.Add(rowdef4);
+			for(int i = 0; i < GRID_SIZE; i++){
+				var spacing = new GridLength(3, GridUnitType.Star);
+				TestGrid.ColumnDefinitions.Add(new ColumnDefinition{ Width = spacing });
+				TestGrid.RowDefinitions.Add(new RowDefinition{ Height = spacing });
+			}
 		}
 	}
 }
