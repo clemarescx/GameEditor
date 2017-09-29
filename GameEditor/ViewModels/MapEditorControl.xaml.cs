@@ -1,33 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using GameEditor.Annotations;
 using GameEditor.Resources;
-using Color = System.Windows.Media.Color;
 using Image = System.Windows.Controls.Image;
 
 namespace GameEditor{
-	
-
-
 	/// <summary>
 	/// Interaction logic for MapEditorControl.xaml
 	/// </summary>
-	public partial class MapEditorControl : UserControl{
+	public partial class MapEditorControl : UserControl, INotifyPropertyChanged{
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null){
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
 		public bool IsDirty{ get; set; }
-		private GameMap Map{ get; set; }
+		private Zone Map{ get; set; }
 
-		private NodeGrid _mapGrid;
+		private Tile _imgSelectedtile;
 
+		public Tile BrushTile
+		{
+			get => _imgSelectedtile;
+			set {
+				_imgSelectedtile = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private readonly TileManager _tileManager;
 		public ObservableCollection<Tile> TerrainTiles{ get; set; }
 		public ObservableCollection<Tile> LogicTiles{ get; set; }
 
@@ -35,72 +46,51 @@ namespace GameEditor{
 			InitializeComponent();
 			DataContext = this;
 
-			var tileManager = new TileManager();
+			_tileManager = new TileManager();
+			BrushTile = _tileManager.DefaultTile;
 
-			TerrainTiles = new ObservableCollection<Tile>(tileManager.TerrainTiles.Values);
-			LogicTiles = new ObservableCollection<Tile>(tileManager.LogicTiles.Values);
+			TerrainTiles = new ObservableCollection<Tile>(_tileManager.TerrainTiles.Values);
+			LogicTiles = new ObservableCollection<Tile>(_tileManager.LogicTiles.Values);
 
-			Map = new GameMap(16, 16);
-			ViewMapGrid.Rows = ViewMapGrid.Columns = 16;
-			ViewLogicGrid.Rows = ViewLogicGrid.Columns = 16;
+			Map = new Zone(8, _tileManager.DefaultTile.Name);
 
-			LoadDefaultMapData();
-		}
-		
+			ViewMapGrid.ShowGridLines = true;
 
-
-		private void LoadDefaultMapData(){
-			// when the canvas is loaded in the app, throw an event to build the map grid
-			CvsMapGrid.AddHandler(LoadedEvent, new RoutedEventHandler(cvsMapGrid_loaded));
+			ViewMapGrid.Background = Brushes.YellowGreen;
+			DrawMap(Map);
 		}
 
-		private void cvsMapGrid_loaded(object sender, RoutedEventArgs e){
-			_mapGrid = new NodeGrid(16, 16);
-			DrawGrid(_mapGrid, Colors.Red);
-		}
+		private void DrawMap(Zone map){
+			InitTileGrid(ViewMapGrid, map.Rows, map.Columns);
 
-
-		private void DrawMap(GameMap map){
 			
+
+			for(int i = 0; i < map.Rows; i++){
+				for(int j = 0; j < map.Columns; j++){
+					var img = new Image();
+
+					var tilevalue = map.TerrainGrid[i, j];
+					var tilename = map.TileNamesInUse[tilevalue];
+					var tile = _tileManager.GetTerrainTile(tilename);
+					img.Source = tile.TileImage;
+					img.PreviewMouseDown += ViewMapGrid_OnMouseDown;
+					Grid.SetRow(img, i);
+					Grid.SetColumn(img, j);
+					ViewMapGrid.Children.Add(img);
+				}
+			}
 		}
 
-		/// <summary>
-		/// Dynamically draw grid to canvas
-		/// TODO: consider using an XAML Grid filled with buttons
-		/// </summary>
-		/// <param name="mapGrid"></param>
-		/// <param name="lineColor"></param>
-		private void DrawGrid(NodeGrid mapGrid, Color lineColor){
-			// draw rows
-			int rowStep = (int)(CvsMapGrid.ActualHeight / mapGrid.Rows);
+		private void InitTileGrid(Grid tileGrid, int rows, int cols){
+			tileGrid.ShowGridLines = true;
+			var spacing = new GridLength(3, GridUnitType.Star);
 
-
-			for(int i = 0; i <= mapGrid.Rows; i++){
-				var line = new Line{
-					StrokeThickness = 1,
-					Stroke = new SolidColorBrush(lineColor),
-					X1 = 0,
-					X2 = CvsMapGrid.ActualWidth,
-					Y1 = i * rowStep,
-					Y2 = i * rowStep
-				};
-				CvsMapGrid.Children.Add(line);
+			for(int i = 0; i < rows; i++){
+				tileGrid.RowDefinitions.Add(new RowDefinition{ Height = spacing });
 			}
 
-			// draw columns
-			var columnStep = (int)(CvsMapGrid.ActualWidth / mapGrid.Columns);
-
-			for(int i = 0; i <= mapGrid.Columns; i++){
-				var line = new Line{
-					StrokeThickness = 1,
-					Stroke = new SolidColorBrush(lineColor),
-					X1 = i * columnStep,
-					X2 = i * columnStep,
-					Y1 = 0,
-					Y2 = CvsMapGrid.ActualHeight
-				};
-
-				CvsMapGrid.Children.Add(line);
+			for(int j = 0; j < cols; j++){
+				tileGrid.ColumnDefinitions.Add(new ColumnDefinition{ Width = spacing });
 			}
 		}
 
@@ -109,20 +99,66 @@ namespace GameEditor{
 
 		private void BtnSaveMap(object sender, RoutedEventArgs e){ }
 
-		private void BtnClearMap(object sender, RoutedEventArgs e){
-			_mapGrid.Reset();
-			CvsMapGrid.Children.Clear();
-			DrawGrid(_mapGrid, Colors.Blue);
-		}
+		private void BtnClearMap(object sender, RoutedEventArgs e){ Map.Fill(0); }
 
 
 		private void TilesListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e){
 			var lb = sender as ListBox;
 			Tile selected = (Tile)lb?.SelectedItem;
-			ImgSelectedTile.Source = selected?.TileImage;
-//			SelectedTile = selected;
-//			Console.WriteLine($@"Selected: {SelectedTile?.Name}");
+			BrushTile = selected;
+
 			Console.WriteLine($@"Selected: {selected?.Name}");
+		}
+
+		private void ViewMapGrid_OnMouseDown(object sender, MouseButtonEventArgs e){
+			if(sender != null){
+				if(BrushTile.Name != "default"){
+					var image = sender as Image;
+					int row = (int)image.GetValue(Grid.RowProperty);
+					int col = (int)image.GetValue(Grid.ColumnProperty);
+					Console.WriteLine($@"Grid clicked in cell {row},{col}");
+
+					string paintbrushTileName = BrushTile.Name;
+
+					if(!Map.TileNamesInUse.Contains(paintbrushTileName)){
+						Console.WriteLine($@"{paintbrushTileName} added to Map's tile index");
+						Map.TileNamesInUse.Add(paintbrushTileName);
+					}
+					Map.TerrainGrid[row, col] = Map.TileNamesInUse.IndexOf(paintbrushTileName);
+				}
+				else{
+					Console.WriteLine("No tile selected");
+				}
+			}
+		}
+
+		private void BtnPrintMap(object sender, RoutedEventArgs e){
+			Console.WriteLine($"Content of map '{Map.Name}':");
+			
+			Console.WriteLine("{ ");
+			for(int i = 0; i < Map.Rows; i++){
+				Console.Write("\t");
+				for(int j = 0; j < Map.Columns; j++){
+					Console.Write($"{Map.TerrainGrid[i,j]}, ");
+				}
+				Console.WriteLine();
+			}
+			Console.WriteLine("}");
+		}
+	}
+
+	/// <summary>
+	/// Converter to avoid getting 
+	/// </summary>
+	[ValueConversion(typeof(Tile), typeof(BitmapImage))]
+	public class TileToBitmapImageConverter : IValueConverter{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture){
+			Tile selectedTile = (Tile)value;
+			return selectedTile?.TileImage;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture){
+			return null;
 		}
 	}
 }

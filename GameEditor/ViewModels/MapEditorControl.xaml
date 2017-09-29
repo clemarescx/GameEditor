@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:GameEditor"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:TileToBitmapImageConverter x:Key="TileToBitmapImageConverter" />
+    </UserControl.Resources>
     <DockPanel Background="LightGray">
         <Grid DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
@@ -26,7 +29,11 @@
                     <WrapPanel Margin="0,5">
                         <Label Content="_Tile:" Target="{Binding ElementName=TxtMapName}" />
                         <Border BorderBrush="Gray" BorderThickness="1">
-                            <Image x:Name="ImgSelectedTile" Height="32" />
+                            <Image Height="32"
+                                   Source="{Binding 
+                                Path=BrushTile, 
+                                Converter={StaticResource TileToBitmapImageConverter}, 
+                                UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
                     </WrapPanel>
                     <Grid>
@@ -38,13 +45,14 @@
                         <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1">
                             <StackPanel x:Name="TerrainTilePanel">
                                 <Label Content="Terrain" />
-                                <ListBox x:Name="LbTerrainTiles" ItemsSource="{Binding Path=TerrainTiles}" MaxHeight="150"
+                                <ListBox x:Name="LbTerrainTiles" ItemsSource="{Binding Path=TerrainTiles}"
+                                         MaxHeight="150"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
                                          SelectionChanged="TilesListBox_OnSelectionChanged">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
-                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Padding" Value="0" />
                                         </Style>
                                     </ListBox.ItemContainerStyle>
 
@@ -66,7 +74,7 @@
                         <Border BorderBrush="Gray" BorderThickness="1" Grid.Row="1">
                             <StackPanel>
                                 <Label Content="Logic" />
-                                <ListBox x:Name="LbLogicTiles" ItemsSource="{Binding Path=LogicTiles}" 
+                                <ListBox x:Name="LbLogicTiles" ItemsSource="{Binding Path=LogicTiles}"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
                                          SelectionChanged="TilesListBox_OnSelectionChanged">
@@ -87,19 +95,20 @@
                 </StackPanel>
             </Border>
             <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Orientation="Horizontal" Height="25">
-
                 <Button Margin="2,0" Content="Load" Width="75" Click="BtnLoadMap" />
                 <Button Margin="2,0" Content="Save" Width="75" Click="BtnSaveMap" IsEnabled="{Binding IsDirty}" />
                 <Button Margin="2,0" Content="Clear" Width="75" Click="BtnClearMap" />
             </StackPanel>
 
             <Border Grid.Row="0" Grid.Column="1" Margin="5" BorderBrush="Aquamarine" BorderThickness="3">
-                <Grid>
-                    <Canvas Name="CvsMapGrid" />
-                    <UniformGrid Name="ViewMapGrid" />
-                    <UniformGrid Name="ViewLogicGrid" />
-                </Grid>
+                <Grid Margin="20" Name="ViewMapGrid" />
             </Border>
+            <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Height="25">
+                <Label>Debug: </Label>
+                <Button Margin="2,0" Content="Print Map" Width="75" Click="BtnPrintMap" />
+                <Button Margin="2,0" Content="Save" Width="75" Click="BtnSaveMap" IsEnabled="{Binding IsDirty}" />
+                <Button Margin="2,0" Content="Clear" Width="75" Click="BtnClearMap" />
+            </StackPanel>
 
 
         </Grid>
