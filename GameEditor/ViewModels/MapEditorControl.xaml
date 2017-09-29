@@ -96,18 +96,20 @@
             </Border>
             <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Orientation="Horizontal" Height="25">
                 <Button Margin="2,0" Content="Load" Width="75" Click="BtnLoadMap" />
-                <Button Margin="2,0" Content="Save" Width="75" Click="BtnSaveMap" IsEnabled="{Binding IsDirty}" />
+                <Button Margin="2,0" Content="Save" Width="75" Click="BtnSaveMap" />
                 <Button Margin="2,0" Content="Clear" Width="75" Click="BtnClearMap" />
             </StackPanel>
 
             <Border Grid.Row="0" Grid.Column="1" Margin="5" BorderBrush="Aquamarine" BorderThickness="3">
-                <Grid Margin="20" Name="ViewMapGrid" />
+                <Grid>
+                    <Grid Margin="20" Name="TerrainMapGrid" />
+                    <Grid Margin="20" Name="LogicMapGrid" />
+                </Grid>
             </Border>
             <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Height="25">
                 <Label>Debug: </Label>
-                <Button Margin="2,0" Content="Print Map" Width="75" Click="BtnPrintMap" />
-                <Button Margin="2,0" Content="Save" Width="75" Click="BtnSaveMap" IsEnabled="{Binding IsDirty}" />
-                <Button Margin="2,0" Content="Clear" Width="75" Click="BtnClearMap" />
+                <Button Margin="2,0" Content="Print to console" Width="75" Click="BtnPrintMap" />
+                <Button Margin="2,0" Content="Print to view" Width="75" Click="BtnPrintView" />
             </StackPanel>
 
 
