@@ -21,20 +21,22 @@ namespace GameEditor.Resources{
 		public Dictionary<string, Tile> LogicTiles = new Dictionary<string, Tile>();
 
 		public TileManager(){
-			SetDefaultTile();
 
 			LoadTerrainTiles();
 			LoadLogicTiles();
+			SetDefaultTile();
+
 			Console.WriteLine(Directory.GetCurrentDirectory());
 		}
 
 		private void SetDefaultTile(){
-			var filepath = _resourcesDirectory.GetFiles("*.png");
+			/*var filepath = _resourcesDirectory.GetFiles("*.png");
 			DefaultTile = new Tile{
 				TileImage = new BitmapImage(new Uri(filepath[0].FullName))
-			};
-		}
+			};*/
+			DefaultTile = GetTerrainTile("sand_1");
 
+		}
 
 		private void LoadTerrainTiles(){ LoadTiles(TerrainTilesDirectoryPath, ref TerrainTiles); }
 
@@ -45,15 +47,14 @@ namespace GameEditor.Resources{
 			try{
 				var dir = new DirectoryInfo(_resourcesDirectory + tileSubDirectory);
 				var fileList = dir.GetFiles("*.png").ToList();
-				Console.WriteLine($@"Loading files from {tileSubDirectory}... ");
+				Console.Write($@"Loading files from {tileSubDirectory}... ");
 
 				foreach(var file in fileList){
-					Console.Write(@".");
 					var img = new BitmapImage(new Uri(file.FullName));
 					var fileName = Path.GetFileNameWithoutExtension(file.Name);
 					dict[fileName] = new Tile{ TileImage = img, Name = file.Name };
 				}
-				Console.WriteLine(" Done.");
+				Console.WriteLine("Done.");
 			}
 			catch(Exception e){
 				Console.WriteLine($@"Could not load terrain tiles: {e.Message}");
