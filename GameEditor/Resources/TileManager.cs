@@ -15,34 +15,47 @@ namespace GameEditor.Resources{
 		readonly DirectoryInfo _resourcesDirectory = new DirectoryInfo("Resources/tiles");
 		private const string TerrainTilesDirectoryPath = "/terrain";
 		private const string LogicTilesDirectoryPath = "/logic";
-		public Tile DefaultTile{ get; private set; }
+		public TerrainTile DefaultTile{ get; private set; }
+		public Tile ErrorTile{ get; private set; }
 
-		public Dictionary<string, Tile> TerrainTiles = new Dictionary<string, Tile>();
-		public Dictionary<string, Tile> LogicTiles = new Dictionary<string, Tile>();
+		public Dictionary<string, TerrainTile> TerrainTiles = new Dictionary<string, TerrainTile>();
+		public Dictionary<string, LogicTile> LogicTiles = new Dictionary<string, LogicTile>();
 
 		public TileManager(){
-
 			LoadTerrainTiles();
 			LoadLogicTiles();
 			SetDefaultTile();
+			SetErrorTile();
 
 			Console.WriteLine(Directory.GetCurrentDirectory());
 		}
 
-		private void SetDefaultTile(){
-			/*var filepath = _resourcesDirectory.GetFiles("*.png");
-			DefaultTile = new Tile{
-				TileImage = new BitmapImage(new Uri(filepath[0].FullName))
-			};*/
-			DefaultTile = GetTerrainTile("sand_1");
-
+		private void SetErrorTile(){
+			// "error.png" is located directly in the Resources folder.
+			var filepath = _resourcesDirectory.GetFiles("*.png");
+			ErrorTile = new Tile{
+				TileImage = new BitmapImage(new Uri(filepath[0].FullName)),
+				Name = Path.GetFileNameWithoutExtension(filepath[0].Name)
+			};
 		}
 
-		private void LoadTerrainTiles(){ LoadTiles(TerrainTilesDirectoryPath, ref TerrainTiles); }
+		private void SetDefaultTile(){
+			DefaultTile = GetTerrainTile("sand_1.png");
+		}
 
-		private void LoadLogicTiles(){ LoadTiles(LogicTilesDirectoryPath, ref LogicTiles); }
+		private void LoadTerrainTiles(){
+			//			LoadTiles(TerrainTilesDirectoryPath, ref TerrainTiles);
+			var loader = new TileLoader<TerrainTile>(_resourcesDirectory + TerrainTilesDirectoryPath);
+			TerrainTiles = loader.Tiles;
+		}
 
+		private void LoadLogicTiles(){
+			//			LoadTiles(LogicTilesDirectoryPath, ref LogicTiles);
+			var loader = new TileLoader<LogicTile>(_resourcesDirectory + LogicTilesDirectoryPath);
+			LogicTiles = loader.Tiles;
+		}
 
+		/*
 		private void LoadTiles(string tileSubDirectory, ref Dictionary<string, Tile> dict){
 			try{
 				var dir = new DirectoryInfo(_resourcesDirectory + tileSubDirectory);
@@ -51,7 +64,7 @@ namespace GameEditor.Resources{
 
 				foreach(var file in fileList){
 					var img = new BitmapImage(new Uri(file.FullName));
-					var fileName = Path.GetFileNameWithoutExtension(file.Name);
+					var fileName = file.Name;
 					dict[fileName] = new Tile{ TileImage = img, Name = file.Name };
 				}
 				Console.WriteLine("Done.");
@@ -60,9 +73,9 @@ namespace GameEditor.Resources{
 				Console.WriteLine($@"Could not load terrain tiles: {e.Message}");
 			}
 		}
-
-		public Tile GetTerrainTile(string tileName){
-			return TerrainTiles.Keys.Contains(tileName) ? TerrainTiles[tileName] : DefaultTile; 
+		*/
+		public TerrainTile GetTerrainTile(string tileName){
+			return TerrainTiles.Keys.Contains(tileName) ? TerrainTiles[tileName] : (TerrainTile) ErrorTile;
 		}
 	}
 }

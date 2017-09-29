@@ -78,13 +78,15 @@
     </ApplicationDefinition>
     <Compile Include="Models\PortalTile.cs" />
     <Compile Include="Models\SpawnTile.cs" />
-    <Compile Include="Models\Zone.cs" />
+    <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Tile.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Models\LogicTile.cs" />
+    <Compile Include="Resources\TileLoader.cs" />
     <Compile Include="Resources\TileManager.cs" />
     <Compile Include="Models\TerrainTile.cs" />
     <Compile Include="ViewModels\TestPanel.xaml.cs">
@@ -398,7 +400,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\tiles\default.png">
+    <Content Include="Resources\tiles\error.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
