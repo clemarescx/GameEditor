@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameEditor"
         mc:Ignorable="d"
+        Top="10"
         Title="Game Editor" Height="600" Width="800">
     <DockPanel>
         <TabControl Name="TabControl">
-            <TabItem Header="Character Editor">
-                <local:CharacterEditorControl />
-            </TabItem>
             <TabItem Header="Map Editor">
                 <local:MapEditorControl />
+            </TabItem>
+            <TabItem Header="Character Editor">
+                <local:CharacterEditorControl />
             </TabItem>
             <TabItem Header="TestPanel">
                 <local:TestPanel></local:TestPanel>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Image = System.Windows.Controls.Image;
@@ -14,7 +15,7 @@ namespace GameEditor{
 	/// Interaction logic for TestPanel.xaml
 	/// </summary>
 	public partial class TestPanel : UserControl{
-		private const int GRID_SIZE = 4;
+		private const int GRID_SIZE = 16;
 
 		public TestPanel(){
 			InitializeComponent();
@@ -31,7 +32,7 @@ namespace GameEditor{
 			for(int i = 0; i < GRID_SIZE && hasNextTile; i++){
 				for(int j = 0; j < GRID_SIZE && hasNextTile; j++){
 					var currImg = new Image{
-						Stretch = Stretch.Fill,
+						Stretch = Stretch.None,
 						Source = imgListIterator.Current
 					};
 					Grid.SetRow(currImg, i);
