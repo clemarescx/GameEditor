@@ -16,10 +16,7 @@ namespace GameEditor{
 
 		private readonly string _applicationDirectory;
 
-		//		private readonly string _currentDirPath;
 		private Character _character;
-
-		public bool IsDirty{ get; set; }
 
 		public CharacterEditorControl(){
 			InitializeComponent();
@@ -73,10 +70,6 @@ namespace GameEditor{
 
 
 		private void BtnSaveChar(object sender, RoutedEventArgs e){
-
-			if(IsDirty){
-				Console.WriteLine(@"CONTENT LOADED!!!");
-			}
 
 			_character.Name = txtCreatureName.Text;
 			_character.Strength = (int)sldStrength.Value;
