@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GameEditor"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="600"
+             d:DesignWidth="800">
     <UserControl.Resources>
         <local:TileToBitmapImageConverter x:Key="TileToBitmapImageConverter" />
     </UserControl.Resources>
@@ -22,13 +23,17 @@
             <Border Margin="5">
                 <StackPanel>
                     <DockPanel Margin="0,5">
-                        <Label Content="_Name:" Target="{Binding ElementName=TxtMapName}" />
-                        <TextBox Name="TxtMapName" TextWrapping="Wrap" />
+                        <Label Content="_Name:"
+                               Target="{Binding ElementName=TxtMapName}" />
+                        <TextBox Name="TxtMapName"
+                                 TextWrapping="Wrap" />
                     </DockPanel>
 
                     <WrapPanel Margin="0,5">
-                        <Label Content="_Tile:" Target="{Binding ElementName=TxtMapName}" />
-                        <Border BorderBrush="Gray" BorderThickness="1">
+                        <Label Content="_Tile:"
+                               Target="{Binding ElementName=TxtMapName}" />
+                        <Border BorderBrush="Gray"
+                                BorderThickness="1">
                             <Image Height="32"
                                    Source="{Binding 
                                 Path=BrushTile, 
@@ -42,17 +47,21 @@
                             <RowDefinition Height="2*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1">
+                        <Border Grid.Row="0"
+                                BorderBrush="Gray"
+                                BorderThickness="1">
                             <StackPanel x:Name="TerrainTilePanel">
                                 <Label Content="Terrain Tiles" />
-                                <ListBox x:Name="LbTerrainTiles" ItemsSource="{Binding Path=TerrainTiles}"
+                                <ListBox x:Name="LbTerrainTiles"
+                                         ItemsSource="{Binding Path=TerrainTiles}"
                                          MaxHeight="150"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
                                          SelectionChanged="TilesListBox_OnSelectionChanged">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
-                                            <Setter Property="Padding" Value="0" />
+                                            <Setter Property="Padding"
+                                                    Value="0" />
                                         </Style>
                                     </ListBox.ItemContainerStyle>
 
@@ -63,18 +72,23 @@
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type local:Tile}">
-                                            <Border BorderBrush="Gray" BorderThickness="1">
-                                                <Image Source="{Binding TileImage}" Height="32" />
+                                            <Border BorderBrush="Gray"
+                                                    BorderThickness="1">
+                                                <Image Source="{Binding TileImage}"
+                                                       Height="32" />
                                             </Border>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
                             </StackPanel>
                         </Border>
-                        <Border BorderBrush="Gray" BorderThickness="1" Grid.Row="1">
+                        <Border BorderBrush="Gray"
+                                BorderThickness="1"
+                                Grid.Row="1">
                             <StackPanel>
                                 <Label Content="Logic Tiles" />
-                                <ListBox x:Name="LbLogicTiles" ItemsSource="{Binding Path=LogicTiles}"
+                                <ListBox x:Name="LbLogicTiles"
+                                         ItemsSource="{Binding Path=LogicTiles}"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
                                          SelectionChanged="TilesListBox_OnSelectionChanged">
@@ -85,48 +99,83 @@
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type local:Tile}">
-                                            <Image Source="{Binding TileImage}" Width="32" />
+                                            <Image Source="{Binding TileImage}"
+                                                   Width="32" />
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
                             </StackPanel>
                         </Border>
-                        <Border Margin="0,10" BorderBrush="Gray" BorderThickness="1" Grid.Row="2">
+                        <Border Margin="0,10"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                Grid.Row="2">
                             <StackPanel>
                                 <Label Content="Tile Properties" />
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Creature:" Target="{Binding ElementName=TxtSpawnCreature}" />
-                                    <TextBox Name="TxtSpawnCreature" TextWrapping="Wrap" />
+                                    <Label Content="_Creature:"
+                                           Target="{Binding ElementName=TxtSpawnCreature}" />
+                                    <TextBox Name="TxtSpawnCreature"
+                                             TextWrapping="Wrap" />
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Walkable:" Target="{Binding ElementName=TxtProperty}"/>
-                                    <CheckBox Name="ChkWalkable"></CheckBox>
+                                    <Label Content="_Walkable:"
+                                           Target="{Binding ElementName=TxtProperty}" />
+                                    <CheckBox Name="ChkWalkable" />
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Destination:" Target="{Binding ElementName=TxtDestination}"/>
-                                    <TextBox Name="TxtDestination" TextWrapping="Wrap" />
+                                    <Label Content="_Destination:"
+                                           Target="{Binding ElementName=TxtDestination}" />
+                                    <TextBox Name="TxtDestination"
+                                             TextWrapping="Wrap" />
                                 </DockPanel>
                             </StackPanel>
                         </Border>
                     </Grid>
                 </StackPanel>
             </Border>
-            <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Orientation="Horizontal" Height="25">
-                <Button Margin="2,0" Content="Load" Width="75" Click="BtnLoadMap" />
-                <Button Margin="2,0" Content="Save" Width="75" Click="BtnSaveMap" />
-                <Button Margin="2,0" Content="Clear" Width="75" Click="BtnClearMap" />
+            <StackPanel Grid.Row="1"
+                        Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Height="25">
+                <Button Margin="2,0"
+                        Content="Load"
+                        Width="75"
+                        Click="BtnLoadMap" />
+                <Button Margin="2,0"
+                        Content="Save"
+                        Width="75"
+                        Click="BtnSaveMap" />
+                <Button Margin="2,0"
+                        Content="Clear"
+                        Width="75"
+                        Click="BtnClearMap" />
             </StackPanel>
 
-            <Border Grid.Row="0" Grid.Column="1" Margin="5" BorderBrush="Aquamarine" BorderThickness="3">
+            <Border Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="5"
+                    BorderBrush="Aquamarine"
+                    BorderThickness="3">
                 <Grid>
-                    <Grid Margin="20" Name="TerrainMapGrid" />
-                    <Grid Margin="20" Name="LogicMapGrid" />
-                    <Grid Margin="20" Name="MouseEventGrid" />
+                    <Grid Margin="20"
+                          Name="TerrainMapGrid" />
+                    <Grid Margin="20"
+                          Name="LogicMapGrid" />
+                    <Grid Margin="20"
+                          Name="MouseEventGrid" />
                 </Grid>
             </Border>
-            <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Height="25">
+            <StackPanel Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Height="25">
                 <Label>Debug: </Label>
-                <Button Margin="2,0" Content="Print to console" Click="BtnPrintMap" />
+                <Button Margin="2,0"
+                        Content="Print to console"
+                        Click="BtnPrintMap" />
             </StackPanel>
         </Grid>
     </DockPanel>

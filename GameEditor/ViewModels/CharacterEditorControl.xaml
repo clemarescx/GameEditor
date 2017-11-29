@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:GameEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="600"
+             d:DesignWidth="800">
     <DockPanel>
 
         <Grid DockPanel.Dock="Bottom">
@@ -21,42 +22,77 @@
 
             <StackPanel Name="stkPnlCharacterAttributes">
                 <DockPanel Margin="0,5">
-                    <Label Content="_Name:" Target="{Binding ElementName=txtCreatureName}" />
-                    <TextBox Name="txtCreatureName" TextWrapping="Wrap" />
+                    <Label Content="_Name:"
+                           Target="{Binding ElementName=txtCreatureName}" />
+                    <TextBox Name="txtCreatureName"
+                             TextWrapping="Wrap" />
                 </DockPanel>
                 <DockPanel Margin="0,5">
-                    <Label Content="_Health points:" Target="{Binding ElementName=txtHealthPoints}" />
-                    <TextBox Name="txtHealthPoints" TextChanged="OnHealthPointsChanged" TextWrapping="Wrap" />
+                    <Label Content="_Health points:"
+                           Target="{Binding ElementName=txtHealthPoints}" />
+                    <TextBox Name="txtHealthPoints"
+                             TextChanged="OnHealthPointsChanged"
+                             TextWrapping="Wrap" />
                 </DockPanel>
 
                 <DockPanel Margin="0,5">
-                    <Label DockPanel.Dock="Left" Content="STR" />
-                    <Label DockPanel.Dock="Right" Content="{Binding ElementName=sldStrength, Path=Value}"
-                           FontWeight="Bold" FontSize="15" />
-                    <Slider Name="sldStrength" Minimum="-15" Maximum="15"
-                            TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" />
-                </DockPanel>
-                <DockPanel Margin="0,5">
-                    <Label DockPanel.Dock="Left" Content="DEX" HorizontalAlignment="Right" />
-                    <Label DockPanel.Dock="Right" Content="{Binding ElementName=sldDexterity, Path=Value}"
-                           FontWeight="Bold" FontSize="15" HorizontalAlignment="Right" />
-                    <Slider Name="sldDexterity" Minimum="-15" Maximum="15"
+                    <Label DockPanel.Dock="Left"
+                           Content="STR" />
+                    <Label DockPanel.Dock="Right"
+                           Content="{Binding ElementName=sldStrength, Path=Value}"
+                           FontWeight="Bold"
+                           FontSize="15" />
+                    <Slider Name="sldStrength"
+                            Minimum="-15"
+                            Maximum="15"
                             TickPlacement="BottomRight"
-                            TickFrequency="1" IsSnapToTickEnabled="True" />
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True" />
                 </DockPanel>
                 <DockPanel Margin="0,5">
-                    <Label DockPanel.Dock="Left" Content="Race" HorizontalAlignment="Right" />
+                    <Label DockPanel.Dock="Left"
+                           Content="DEX"
+                           HorizontalAlignment="Right" />
+                    <Label DockPanel.Dock="Right"
+                           Content="{Binding ElementName=sldDexterity, Path=Value}"
+                           FontWeight="Bold"
+                           FontSize="15"
+                           HorizontalAlignment="Right" />
+                    <Slider Name="sldDexterity"
+                            Minimum="-15"
+                            Maximum="15"
+                            TickPlacement="BottomRight"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True" />
+                </DockPanel>
+                <DockPanel Margin="0,5">
+                    <Label DockPanel.Dock="Left"
+                           Content="Race"
+                           HorizontalAlignment="Right" />
                     <ComboBox Name="cmbRace" />
                 </DockPanel>
             </StackPanel>
-            <Border Background="LightSlateGray" BorderBrush="Aquamarine" BorderThickness="3" Grid.Column="1">
-                <TextBlock Name="txtCreatureDetails" Background="LightGray" Margin="20" />
+            <Border Background="LightSlateGray"
+                    BorderBrush="Aquamarine"
+                    BorderThickness="3"
+                    Grid.Column="1">
+                <TextBlock Name="txtCreatureDetails"
+                           Background="LightGray"
+                           Margin="20" />
             </Border>
 
 
-            <DockPanel Grid.Column="0" Grid.Row="2" Height="25">
-                <Button DockPanel.Dock="Left" Content="Load" Width="75" Click="BtnLoadChar" />
-                <Button DockPanel.Dock="Right" Content="Save" Width="75" Click="BtnSaveChar"
+            <DockPanel Grid.Column="0"
+                       Grid.Row="2"
+                       Height="25">
+                <Button DockPanel.Dock="Left"
+                        Content="Load"
+                        Width="75"
+                        Click="BtnLoadChar" />
+                <Button DockPanel.Dock="Right"
+                        Content="Save"
+                        Width="75"
+                        Click="BtnSaveChar"
                         IsEnabled="{Binding ElementName=CharacterEditor IsDirty}" />
             </DockPanel>
         </Grid>

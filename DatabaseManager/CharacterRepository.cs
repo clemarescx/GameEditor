@@ -4,23 +4,23 @@ using System.Threading.Tasks;
 
 namespace DatabaseManager{
 	public class CharacterRepository{
-		private readonly IDatabaseConnection<Character_Test> _client;
-		public List<Character_Test> Characters{ get; }
+		private readonly IDatabaseConnection<CharacterTest> _client;
+		public List<CharacterTest> Characters{ get; }
 
-		public CharacterRepository(IDatabaseConnection<Character_Test> client){
+		public CharacterRepository(IDatabaseConnection<CharacterTest> client){
 			_client = client;
 			Characters = GetCharactersAsync().Result;
-			Console.WriteLine("Characters loaded.");
+			Console.WriteLine(@"Done.");
 		}
 
-		public Character_Test GetCharacterByName(string name){ return Characters.Find(c => c.Name == name); }
+		public CharacterTest GetCharacterByName(string name){ return Characters.Find(c => c.Name == name); }
 
-		public async Task<List<Character_Test>> GetCharactersAsync(){
-			Console.WriteLine("Getting characters...");
+		public async Task<List<CharacterTest>> GetCharactersAsync(){
+			Console.WriteLine(@"Done.");
 			return await _client.GetCollectionAsListAsync();
 		}
 
-		public void AddCharacter(Character_Test newChar){
+		public void AddCharacter(CharacterTest newChar){
 			if(Characters.Exists(c => c.Name == newChar.Name)){
 				Console.WriteLine("Character '{0}' already exists in the database. Pick another name.", newChar.Name);
 				return;

@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:GameEditor"
         mc:Ignorable="d"
         Top="10"
-        Title="Game Editor" Height="600" Width="800">
+        Title="Game Editor"
+        Height="600"
+        Width="800">
     <DockPanel>
         <TabControl Name="TabControl">
             <TabItem Header="Map Editor">
@@ -16,7 +18,7 @@
                 <local:CharacterEditorControl />
             </TabItem>
             <TabItem Header="TestPanel">
-                <local:TestPanel></local:TestPanel>
+                <local:TestPanel />
             </TabItem>
         </TabControl>
     </DockPanel>
