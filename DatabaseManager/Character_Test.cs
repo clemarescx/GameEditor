@@ -1,10 +1,8 @@
 ﻿using MongoDB.Bson;
 
-namespace DatabaseManager
-{
-	public class CharacterTest
-	{
-		public ObjectId Id{ get; set; }
+namespace DatabaseManager{
+	public class Character_Test{
+		public ObjectId _id{ get; set; }
 
 		public string Name{ get; set; }
 

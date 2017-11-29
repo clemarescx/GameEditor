@@ -99,11 +99,11 @@
                                     <TextBox Name="TxtSpawnCreature" TextWrapping="Wrap" />
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Walkable:" Target="{Binding ElementName=TxtProperty}" />
-                                    <CheckBox Name="ChkWalkable" />
+                                    <Label Content="_Walkable:" Target="{Binding ElementName=TxtProperty}"/>
+                                    <CheckBox Name="ChkWalkable"></CheckBox>
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Destination:" Target="{Binding ElementName=TxtDestination}" />
+                                    <Label Content="_Destination:" Target="{Binding ElementName=TxtDestination}"/>
                                     <TextBox Name="TxtDestination" TextWrapping="Wrap" />
                                 </DockPanel>
                             </StackPanel>
