@@ -4,7 +4,11 @@ namespace GameEditor.Models
 {
     public class Tile
     {
-        public BitmapImage TileImage{ get; set; }
         public string Name{ get; set; }
+        public bool IsWalkable{ get; set; }
+        public bool IsSpawnPoint{ get; set; }
+        public string CreatureToSpawn{ get; set; }
+        public bool IsTransitionSpot{ get; set; }
+        public string DestinationMap{ get; set; }
     }
 }

@@ -100,10 +100,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Models\LogicTile.cs" />
-    <Compile Include="Services\TileLoader.cs" />
+    <Compile Include="Services\SpriteLoader.cs" />
     <Compile Include="Services\MapEditorService.cs" />
-    <Compile Include="Models\TerrainTile.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\TestPanel.xaml.cs">
       <DependentUpon>TestPanel.xaml</DependentUpon>

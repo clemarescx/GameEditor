@@ -4,12 +4,7 @@ namespace GameEditor.ViewModels
 {
     public partial class ViewModelLocator
     {
-        public class MainViewModel :ViewModelBase
-        {
-            public MainViewModel()
-            {
-                
-            }
-        }
+        public class MainViewModel : ViewModelBase
+        { }
     }
 }

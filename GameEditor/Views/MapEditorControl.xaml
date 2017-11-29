@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <services:TileToBitmapImageConverter x:Key="TileToBitmapImageConverter" />
     </UserControl.Resources>
-    
+
     <DockPanel Background="LightGray">
         <Grid DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
@@ -55,7 +55,7 @@
                                 BorderBrush="Gray"
                                 BorderThickness="1">
                             <StackPanel x:Name="TerrainTilePanel">
-                                <Label Content="Terrain Tiles" />
+                                <Label Content="Terrain Sprites" />
                                 <ListBox x:Name="LbTerrainTiles"
                                          ItemsSource="{Binding Path=TerrainTiles}"
                                          MaxHeight="150"
@@ -90,7 +90,7 @@
                                 BorderThickness="1"
                                 Grid.Row="1">
                             <StackPanel>
-                                <Label Content="Logic Tiles" />
+                                <Label Content="Logic Sprites" />
                                 <ListBox x:Name="LbLogicTiles"
                                          ItemsSource="{Binding Path=LogicTiles}"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"

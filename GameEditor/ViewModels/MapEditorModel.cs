@@ -22,7 +22,7 @@ namespace GameEditor.ViewModels
         private ObservableCollection<Tile> _logicTiles;
         private ObservableCollection<Tile> _terrainTiles;
 
-        public RelayCommand BtnPrintMapCommand{ get; private set; }
+        public RelayCommand BtnPrintMapCommand{ get; }
 
         private Map Map{ get; }
         public Tile BrushTile
@@ -98,7 +98,7 @@ namespace GameEditor.ViewModels
             for(var i = 0; i < Map.Rows; i++)
             {
                 Console.Write("\t");
-                for(var j = 0; j < Map.Columns; j++) Console.Write($@"{Map.TerrainGrid[ i, j ]}, ");
+                for(var j = 0; j < Map.Columns; j++) Console.Write($@"{Map.TerrainSpriteGrid[ i, j ]}, ");
 
                 Console.WriteLine();
             }

@@ -1,36 +1,39 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 using Newtonsoft.Json;
 
 namespace GameEditor.Models
 {
-	public class Map
-	{
-		public int Rows => TerrainGrid.GetLength(0);
-		public int Columns => TerrainGrid.GetLength(1);
+    public class Map
+    {
+        public int Rows => TerrainSpriteGrid.GetLength(0);
+        public int Columns => TerrainSpriteGrid.GetLength(1);
 
-		public List<string> TerrainTileNamesInUse{ get; set; }
+        public Dictionary<int, string> TerrainSpriteNameTable{ get; set; }
+        public Dictionary<int, string> CreatureNameTable{ get; set; }
+        public Dictionary<int, Point> CreatureSpawnTable{ get; set; }
+        public int[,] TerrainSpriteGrid{ get; set; }
+        public int[,] WalkableGrid{ get; set; }
 
-		public int[,] TerrainGrid{ get; set; }
 
-		public List<LogicTile> LogicTiles{ get; set; }
-		public string Name{ get; set; }
+        public string Name{ get; set; }
 
-		public Map(int rows, int columns, string defaultTile)
-		{
-			TerrainTileNamesInUse = new List<string>{ defaultTile };
-			TerrainGrid = new int[rows, columns];
-			LogicTiles = new List<LogicTile>();
-		}
+        public Map(int rows, int columns)
+        {
+            TerrainSpriteNameTable = new Dictionary<int, string>();
+            TerrainSpriteGrid = new int[rows, columns];
+            //			LogicTiles = new List<LogicTile>();
+        }
 
-		[JsonConstructor]
-		public Map(int size, string defaultTile) : this(size, size, defaultTile)
-		{ }
+        [JsonConstructor]
+        public Map(int size) : this(size, size)
+        { }
 
-		public void Fill(int value)
-		{
-			for(var i = 0; i < Rows; i++)
-			for(var j = 0; j < Columns; j++)
-				TerrainGrid[ i, j ] = value;
-		}
-	}
+        public void Fill(int value)
+        {
+            for(var i = 0; i < Rows; i++)
+            for(var j = 0; j < Columns; j++)
+                TerrainSpriteGrid[ i, j ] = value;
+        }
+    }
 }
