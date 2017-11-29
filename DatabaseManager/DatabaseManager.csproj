@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Character.cs" />
+    <Compile Include="Character_Test.cs" />
     <Compile Include="CharacterRepository.cs" />
     <Compile Include="IDatabaseConnection.cs" />
     <Compile Include="MongoDbConnection.cs" />

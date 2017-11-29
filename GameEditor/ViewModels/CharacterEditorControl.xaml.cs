@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using DatabaseManager;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
@@ -13,7 +14,6 @@ namespace GameEditor{
 	/// </summary>
 	public partial class CharacterEditorControl : UserControl{
 		private readonly string _characterssDirPath;
-
 		private readonly string _applicationDirectory;
 
 		private Character _character;
@@ -55,6 +55,7 @@ namespace GameEditor{
 			
 		}
 
+		
 		private void CreateDefaultRaceDatabase(string races_db_filepath){
 			Console.WriteLine(@"Creating default races.json...");
 			// create races.json populated with default hardcoded values
@@ -68,7 +69,7 @@ namespace GameEditor{
 			}
 		}
 
-
+		// Serialize Character to JSON
 		private void BtnSaveChar(object sender, RoutedEventArgs e){
 
 			_character.Name = txtCreatureName.Text;
@@ -94,10 +95,12 @@ namespace GameEditor{
 			}
 		}
 
-		private void SaveCharacter(){
-			
+		private void saveCharacterOnline(){
+		//TODO: refactor DatabaseManager project to work with GameEditor.Character instead of Character_Test
+
 		}
 
+		// Deserialize Character to JSON
 		private void BtnLoadChar(object sender, RoutedEventArgs e){
 			var openFileDialog = new OpenFileDialog{ InitialDirectory = _characterssDirPath };
 
@@ -127,6 +130,7 @@ namespace GameEditor{
 			}
 		}
 
+		// Quick validation check for health points
 		private void OnHealthPointsChanged(object sender, TextChangedEventArgs textChangedEventArgs){
 			if(string.IsNullOrWhiteSpace(txtHealthPoints.Text)){
 				txtHealthPoints.Text = "";

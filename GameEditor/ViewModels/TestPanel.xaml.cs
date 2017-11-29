@@ -12,7 +12,7 @@ using Image = System.Windows.Controls.Image;
 
 namespace GameEditor{
 	/// <summary>
-	/// Interaction logic for TestPanel.xaml
+	/// Used as WPF testing grounds
 	/// </summary>
 	public partial class TestPanel : UserControl{
 		private const int GRID_SIZE = 16;

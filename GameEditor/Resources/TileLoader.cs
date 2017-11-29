@@ -5,6 +5,11 @@ using System.Linq;
 using System.Windows.Media.Imaging;
 
 namespace GameEditor.Resources{
+	/// <summary>
+	/// Builds tiles with their respective
+	/// sprite and name, and cast them to their subtype T
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public class TileLoader<T> where T : Tile, new(){
 		public Dictionary<string, T> Tiles{ get; }
 		public TileLoader(string path){
