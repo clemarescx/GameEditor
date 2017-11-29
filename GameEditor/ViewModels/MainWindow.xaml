@@ -16,7 +16,7 @@
                 <local:CharacterEditorControl />
             </TabItem>
             <TabItem Header="TestPanel">
-                <local:TestPanel></local:TestPanel>
+                <local:TestPanel />
             </TabItem>
         </TabControl>
     </DockPanel>

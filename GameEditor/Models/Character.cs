@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace GameEditor{
-	
-	public struct Character{
+namespace GameEditor
+{
+	public struct Character
+	{
 		public string Name{ get; set; }
 		public int HealthPoints{ get; set; }
 		public int Strength{ get; set; }
