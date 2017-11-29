@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
+using GameEditor.Models;
 
-namespace GameEditor.Resources
+namespace GameEditor.Services
 {
 	/// <summary>
 	///     Builds tiles with their respective

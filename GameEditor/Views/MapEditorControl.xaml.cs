@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using GameEditor.Annotations;
-using GameEditor.Resources;
+using GameEditor.Models;
+using GameEditor.Services;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
@@ -22,53 +19,50 @@ namespace GameEditor
 	/// </summary>
 	public partial class MapEditorControl : UserControl, INotifyPropertyChanged
 	{
-		private readonly TileManager _tileManager;
-		private Tile _brushTile;
-		/// 
-		//////////////
+		private readonly MapEditorService _mapEditorService;
 
 
 		private Map Map{ get; set; }
-		public ObservableCollection<TerrainTile> TerrainTiles{ get; set; }
-		public ObservableCollection<LogicTile> LogicTiles{ get; set; }
-		public Tile BrushTile
-		{
-			get => _brushTile;
-			set
-			{
-				_brushTile = value;
-				OnPropertyChanged();
-			}
-		}
+//		public ObservableCollection<TerrainTile> TerrainTiles{ get; set; }
+//		public ObservableCollection<LogicTile> LogicTiles{ get; set; }
+//		private Tile _brushTile;
+//		public Tile BrushTile
+//		{
+//			get => _brushTile;
+//			set
+//			{
+//				_brushTile = value;
+//				OnPropertyChanged();
+//			}
+//		}
 
 		public MapEditorControl()
 		{
 			InitializeComponent();
-			DataContext = this;
+//			DataContext = this;
 
-			_tileManager = new TileManager();
+			_mapEditorService = new MapEditorService();
 
-			TerrainTiles = new ObservableCollection<TerrainTile>(_tileManager.TerrainTiles.Values);
-			LogicTiles = new ObservableCollection<LogicTile>(_tileManager.LogicTiles.Values);
-			BrushTile = _tileManager.DefaultTile;
+//			TerrainTiles = new ObservableCollection<TerrainTile>(_mapEditorService.TerrainTiles.Values);
+//			LogicTiles = new ObservableCollection<LogicTile>(_mapEditorService.LogicTiles.Values);
+//			BrushTile = _mapEditorService.DefaultTile;
 
-			Map = new Map(8, _tileManager.DefaultTile.Name);
+//			Map = new Map(8, _mapEditorService.DefaultTile.Name);
+//			Map = new Map(8, "sand_1.png");
 
 			TerrainMapGrid.ShowGridLines = true;
 			TerrainMapGrid.Background = Brushes.YellowGreen;
 
-			InitTileGrid(TerrainMapGrid, Map.Rows, Map.Columns);
-			//			InitTileGrid(LogicMapGrid, Map.Rows, Map.Columns);
-			//			InitTileGrid(MouseEventGrid, Map.Rows, Map.Columns);
+//			InitTileGrid(TerrainMapGrid, Map.Rows, Map.Columns);
 
-			DrawMap(Map);
+//			DrawMap(Map);
 		}
 
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
+//		[NotifyPropertyChangedInvocator]
+//		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+//		{
+//			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+//		}
 
 		private void AddToGrid(Grid grid, int row, int col, Image img)
 		{
@@ -86,7 +80,7 @@ namespace GameEditor
 					var terrainImg = new Image();
 					var tilevalue = map.TerrainGrid[ i, j ];
 					var tilename = map.TerrainTileNamesInUse[ tilevalue ];
-					var tile = _tileManager.GetTerrainTile(tilename);
+					var tile = _mapEditorService.GetTerrainTile(tilename);
 					terrainImg.Source = tile.TileImage;
 					terrainImg.PreviewMouseDown += TerrainMapGrid_OnMouseDown;
 					AddToGrid(TerrainMapGrid, i, j, terrainImg);
@@ -173,11 +167,11 @@ namespace GameEditor
 		// Change the tile brush according to selected tile in the lists
 		private void TilesListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var lb = sender as ListBox;
-			var selected = (Tile)lb?.SelectedItem;
-			BrushTile = selected;
+//			var lb = sender as ListBox;
+//			var selected = (Tile)lb?.SelectedItem;
+//			BrushTile = selected;
 
-			Console.WriteLine($@"Selected: {selected?.Name}");
+//			Console.WriteLine($@"Selected: {selected?.Name}");
 		}
 
 
@@ -190,40 +184,23 @@ namespace GameEditor
 			//			
 			if(sender != null)
 			{
-				var image = sender as Image;
-				var row = (int)image.GetValue(Grid.RowProperty);
-				var col = (int)image.GetValue(Grid.ColumnProperty);
-				Console.WriteLine($@"TerrainGrid clicked in cell {row},{col}");
-				var paintbrushTileName = BrushTile.Name;
+//				var image = sender as Image;
+//				var row = (int)image.GetValue(Grid.RowProperty);
+//				var col = (int)image.GetValue(Grid.ColumnProperty);
+//				Console.WriteLine($@"TerrainGrid clicked in cell {row},{col}");
+//				var paintbrushTileName = BrushTile.Name;
 
-				if(!Map.TerrainTileNamesInUse.Contains(paintbrushTileName))
-				{
-					// if the sprite has not been used for this map before, add it to the index table
-					Console.WriteLine($@"{paintbrushTileName} added to Map's tile index");
-					Map.TerrainTileNamesInUse.Add(paintbrushTileName);
-				}
+//				if(!Map.TerrainTileNamesInUse.Contains(paintbrushTileName))
+//				{
+//					 if the sprite has not been used for this map before, add it to the index table
+//					Console.WriteLine($@"{paintbrushTileName} added to Map's tile index");
+//					Map.TerrainTileNamesInUse.Add(paintbrushTileName);
+//				}
 
-				// update both the model and the view
-				Map.TerrainGrid[ row, col ] = Map.TerrainTileNamesInUse.IndexOf(paintbrushTileName);
-				image.Source = BrushTile.TileImage;
+//				 update both the model and the view
+//				Map.TerrainGrid[ row, col ] = Map.TerrainTileNamesInUse.IndexOf(paintbrushTileName);
+//				image.Source = BrushTile.TileImage;
 			}
-		}
-
-
-		// For debugging
-		private void BtnPrintMap(object sender, RoutedEventArgs e)
-		{
-			Console.WriteLine($@"Content of map '{Map.Name}':");
-			Console.WriteLine(@"Done.");
-			for(var i = 0; i < Map.Rows; i++)
-			{
-				Console.Write("\t");
-				for(var j = 0; j < Map.Columns; j++) Console.Write($@"{Map.TerrainGrid[ i, j ]}, ");
-
-				Console.WriteLine();
-			}
-
-			Console.WriteLine(@"Done.");
 		}
 
 		//////////////
@@ -232,19 +209,4 @@ namespace GameEditor
 		public event PropertyChangedEventHandler PropertyChanged;
 	}
 
-	// Converter to unpack a Tile's sprite from within XAML view file
-	[ValueConversion(typeof(Tile), typeof(BitmapImage))]
-	public class TileToBitmapImageConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			var selectedTile = (Tile)value;
-			return selectedTile?.TileImage;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return null;
-		}
-	}
 }

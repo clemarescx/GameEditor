@@ -1,4 +1,4 @@
-﻿namespace GameEditor
+﻿namespace GameEditor.Models
 {
 	public class TerrainTile : Tile
 	{

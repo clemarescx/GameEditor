@@ -4,12 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GameEditor"
+             xmlns:models="clr-namespace:GameEditor.Models"
+             xmlns:services="clr-namespace:GameEditor.Services"
              mc:Ignorable="d"
              d:DesignHeight="600"
-             d:DesignWidth="800">
+             d:DesignWidth="800"
+             DataContext="{Binding Source={StaticResource Locator}, Path=MapEditor}">
     <UserControl.Resources>
-        <local:TileToBitmapImageConverter x:Key="TileToBitmapImageConverter" />
+        <services:TileToBitmapImageConverter x:Key="TileToBitmapImageConverter" />
     </UserControl.Resources>
+    
     <DockPanel Background="LightGray">
         <Grid DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
@@ -71,7 +75,7 @@
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type local:Tile}">
+                                        <DataTemplate DataType="{x:Type models:Tile}">
                                             <Border BorderBrush="Gray"
                                                     BorderThickness="1">
                                                 <Image Source="{Binding TileImage}"
@@ -98,7 +102,7 @@
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type local:Tile}">
+                                        <DataTemplate DataType="{x:Type models:Tile}">
                                             <Image Source="{Binding TileImage}"
                                                    Width="32" />
                                         </DataTemplate>
@@ -175,7 +179,7 @@
                 <Label>Debug: </Label>
                 <Button Margin="2,0"
                         Content="Print to console"
-                        Click="BtnPrintMap" />
+                        Command="{Binding BtnPrintMapCommand}" />
             </StackPanel>
         </Grid>
     </DockPanel>

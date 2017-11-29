@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GameEditor.ViewModels;
 
 namespace GameEditor
 {
@@ -10,6 +11,8 @@ namespace GameEditor
 		public MainWindow()
 		{
 			InitializeComponent();
+			Closing += (s, e) => ViewModelLocator.Cleanup();
+
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using GameEditor.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
@@ -47,8 +48,8 @@ namespace GameEditor
 			{
 				var raceFile = File.ReadAllText(raceDbFilepath);
 				var races = JsonConvert.DeserializeObject<string[]>(raceFile);
-				cmbRace.ItemsSource = races;
-				cmbRace.SelectedIndex = 0;
+				CmbRace.ItemsSource = races;
+				CmbRace.SelectedIndex = 0;
 			}
 			catch(Exception e)
 			{
@@ -77,10 +78,10 @@ namespace GameEditor
 		// Serialize Character to JSON
 		private void BtnSaveChar(object sender, RoutedEventArgs e)
 		{
-			_character.Name = txtCreatureName.Text;
-			_character.Strength = (int)sldStrength.Value;
-			_character.Dexterity = (int)sldDexterity.Value;
-			_character.RaceIndex = cmbRace.SelectedIndex;
+			_character.Name = TxtCreatureName.Text;
+			_character.Strength = (int)SldStrength.Value;
+			_character.Dexterity = (int)SldDexterity.Value;
+			_character.RaceIndex = CmbRace.SelectedIndex;
 
 			var jsonConvertCreature = JsonConvert.SerializeObject(_character);
 
@@ -121,16 +122,16 @@ namespace GameEditor
 				var jsonCreature = File.ReadAllText(openFileDialog.FileName);
 				_character = JsonConvert.DeserializeObject<Character>(jsonCreature);
 
-				txtCreatureName.Text = _character.Name;
-				txtHealthPoints.Text = _character.HealthPoints.ToString();
-				sldStrength.Value = _character.Strength;
-				sldDexterity.Value = _character.Dexterity;
-				cmbRace.SelectedIndex = _character.RaceIndex;
+				TxtCreatureName.Text = _character.Name;
+				TxtHealthPoints.Text = _character.HealthPoints.ToString();
+				SldStrength.Value = _character.Strength;
+				SldDexterity.Value = _character.Dexterity;
+				CmbRace.SelectedIndex = _character.RaceIndex;
 
 				var itemList = "";
 				foreach(var item in _character.Inventory) itemList += item + "\n";
 
-				txtCreatureDetails.Text = itemList;
+				TxtCreatureDetails.Text = itemList;
 			}
 			catch(Exception ex)
 			{
@@ -142,13 +143,13 @@ namespace GameEditor
 		// Quick validation check for health points
 		private void OnHealthPointsChanged(object sender, TextChangedEventArgs textChangedEventArgs)
 		{
-			if(string.IsNullOrWhiteSpace(txtHealthPoints.Text)) txtHealthPoints.Text = "";
+			if(string.IsNullOrWhiteSpace(TxtHealthPoints.Text)) TxtHealthPoints.Text = "";
 			else
 			{
-				if(!int.TryParse(txtHealthPoints.Text, out var hp)) txtHealthPoints.Foreground = Brushes.Red;
+				if(!int.TryParse(TxtHealthPoints.Text, out var hp)) TxtHealthPoints.Foreground = Brushes.Red;
 				else
 				{
-					txtHealthPoints.Foreground = Brushes.Black;
+					TxtHealthPoints.Foreground = Brushes.Black;
 					_character.HealthPoints = hp;
 				}
 			}

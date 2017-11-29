@@ -20,17 +20,17 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Name="stkPnlCharacterAttributes">
+            <StackPanel Name="StkPnlCharacterAttributes">
                 <DockPanel Margin="0,5">
                     <Label Content="_Name:"
-                           Target="{Binding ElementName=txtCreatureName}" />
-                    <TextBox Name="txtCreatureName"
+                           Target="{Binding ElementName=TxtCreatureName}" />
+                    <TextBox Name="TxtCreatureName"
                              TextWrapping="Wrap" />
                 </DockPanel>
                 <DockPanel Margin="0,5">
                     <Label Content="_Health points:"
-                           Target="{Binding ElementName=txtHealthPoints}" />
-                    <TextBox Name="txtHealthPoints"
+                           Target="{Binding ElementName=TxtHealthPoints}" />
+                    <TextBox Name="TxtHealthPoints"
                              TextChanged="OnHealthPointsChanged"
                              TextWrapping="Wrap" />
                 </DockPanel>
@@ -39,10 +39,10 @@
                     <Label DockPanel.Dock="Left"
                            Content="STR" />
                     <Label DockPanel.Dock="Right"
-                           Content="{Binding ElementName=sldStrength, Path=Value}"
+                           Content="{Binding ElementName=SldStrength, Path=Value}"
                            FontWeight="Bold"
                            FontSize="15" />
-                    <Slider Name="sldStrength"
+                    <Slider Name="SldStrength"
                             Minimum="-15"
                             Maximum="15"
                             TickPlacement="BottomRight"
@@ -54,11 +54,11 @@
                            Content="DEX"
                            HorizontalAlignment="Right" />
                     <Label DockPanel.Dock="Right"
-                           Content="{Binding ElementName=sldDexterity, Path=Value}"
+                           Content="{Binding ElementName=SldDexterity, Path=Value}"
                            FontWeight="Bold"
                            FontSize="15"
                            HorizontalAlignment="Right" />
-                    <Slider Name="sldDexterity"
+                    <Slider Name="SldDexterity"
                             Minimum="-15"
                             Maximum="15"
                             TickPlacement="BottomRight"
@@ -69,14 +69,14 @@
                     <Label DockPanel.Dock="Left"
                            Content="Race"
                            HorizontalAlignment="Right" />
-                    <ComboBox Name="cmbRace" />
+                    <ComboBox Name="CmbRace" />
                 </DockPanel>
             </StackPanel>
             <Border Background="LightSlateGray"
                     BorderBrush="Aquamarine"
                     BorderThickness="3"
                     Grid.Column="1">
-                <TextBlock Name="txtCreatureDetails"
+                <TextBlock Name="TxtCreatureDetails"
                            Background="LightGray"
                            Margin="20" />
             </Border>

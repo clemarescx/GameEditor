@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GameEditor
+namespace GameEditor.Models
 {
 	public struct Character
 	{
