@@ -34,19 +34,16 @@
                    Grid.ColumnSpan="2"
                    Orientation="Horizontal"
                    Margin="5">
-            <Button Margin="5,0"
+            <Button Margin="5,2"
                     Content="Create world"
                     Command="{Binding BtnCreateWorldCommand}" />
-            <Button Margin="5,0"
+            <Button Margin="5,2"
                     Content="Load world"
                     Command="{Binding BtnLoadWorldCommand}" />
-            <Button Margin="5,0"
+            <Button Margin="5,2"
                     Content="Save world"
                     Command="{Binding BtnSaveWorldCommand}" />
-            <Button Margin="5,0"
-                    Content="Debug button"
-                    Command="{Binding BtnWorldDebugCommand}" />
-            <Button Margin="5,0"
+            <Button Margin="5,2"
                     Content="Print World content"
                     Command="{Binding BtnWorldPrintCommand}" />
 

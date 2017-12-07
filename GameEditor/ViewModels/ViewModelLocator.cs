@@ -24,6 +24,7 @@ namespace GameEditor.ViewModels
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
         public MapEditorViewModel MapEditor => ServiceLocator.Current.GetInstance<MapEditorViewModel>();
         public WorldEditorViewModel WorldEditor => ServiceLocator.Current.GetInstance<WorldEditorViewModel>();
+        public TileViewModel TileView => ServiceLocator.Current.GetInstance<TileViewModel>();
 
         /// <summary>
         ///     Initializes a new instance of the ViewModelLocator class.
@@ -47,6 +48,7 @@ namespace GameEditor.ViewModels
 
             SimpleIoc.Default.Register<MapEditorViewModel>();
             SimpleIoc.Default.Register<WorldEditorViewModel>();
+            SimpleIoc.Default.Register<TileViewModel>();
         }
 
         public static void Cleanup()

@@ -20,21 +20,10 @@ namespace GameEditor
     /// </summary>
     public partial class MapEditorControl : UserControl, INotifyPropertyChanged
     {
-//        private static MapEditorService _mapEditorService;
-
-
-        private AreaMap AreaMap{ get; set; }
 
         public MapEditorControl()
         {
             InitializeComponent();
-
-//            _mapEditorService = new MapEditorService();
-
-            TerrainMapGrid.ShowGridLines = true;
-            TerrainMapGrid.Background = Brushes.YellowGreen;
-//            InitTileGrid(TerrainMapGrid);
-
         }
 
         private void AddToGrid(Grid grid, int row, int col, Image img)
@@ -46,11 +35,11 @@ namespace GameEditor
 
         private void DrawMap()
         {
-            for(var i = 0; i < AreaMap.Rows; i++)
+//            for(var i = 0; i < AreaMap.Rows; i++)
             {
-                for(var j = 0; j < AreaMap.Columns; j++)
+//                for(var j = 0; j < AreaMap.Columns; j++)
                 {
-                    UpdateTileAt(i,j);
+//                    UpdateTileAt(i,j);
                 }
             }
         }
@@ -60,15 +49,10 @@ namespace GameEditor
             var terrainImg = new Image();
 //            var tilevalue = AreaMap.Grid[row, column];
 //            var tilename = AreaMap.TerrainSpriteNameTable[tilevalue];
-            var tilename = AreaMap.Grid[ row, column ].SpriteName;
+//            var tilename = AreaMap.Grid[ row, column ].SpriteName;
 //            terrainImg.Source = _mapEditorService.GetTerrainSprite(tilename);
             terrainImg.PreviewMouseDown += TerrainMapGrid_OnMouseDown;
-            AddToGrid(TerrainMapGrid, row, column, terrainImg);
-        }
-
-        private void LogicMapGrid_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine(@"Done.");
+//            AddToGrid(TerrainMapGrid, row, column, terrainImg);
         }
 
         // Prepare the grid space

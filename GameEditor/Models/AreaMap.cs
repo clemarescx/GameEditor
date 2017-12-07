@@ -17,25 +17,23 @@ namespace GameEditor.Models
 
         public string Name{ get; set; }
 
-        public AreaMap(int rows, int columns, string name)
-        {
-//            TerrainSpriteNameTable = new Dictionary<int, string>();
-//            Grid = new int[rows, columns];
-            Grid = new Tile[rows, columns];
-        }
-
         [JsonConstructor]
-        public AreaMap(int size, string name) : this(size, size, name)
+        public AreaMap() : this("newMap")
         {
-            Name = name;
         }
-
-//        public void Fill(int value)
-//        {
-//            for(var i = 0; i < Rows; i++)
-//            for(var j = 0; j < Columns; j++)
-//                Grid[ i, j ] = value;
-//        }
+        public AreaMap(string mapName) : this(8, mapName, "sand_1.png")
+        {
+        }
+        public AreaMap(string mapName, string defaultSpriteName) : this(8, mapName, defaultSpriteName)
+        {
+        }
+        private AreaMap(int size, string mapName, string defaultSpriteName)
+        {
+            Name = mapName;
+            Grid = new Tile[size, size];
+            var defaultTile = new Tile{ SpriteName = defaultSpriteName };
+            Fill(defaultTile);
+        }
 
         public void Fill(Tile value)
         {

@@ -92,6 +92,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignMapEditorService.cs" />
+    <Compile Include="Messages\AreamapsAvailableMessage.cs" />
+    <Compile Include="Messages\SaveWorldMessage.cs" />
     <Compile Include="Messages\SaveMapMessage.cs" />
     <Compile Include="Messages\MapSelectedMessage.cs" />
     <Compile Include="Models\WorldMap.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Services\MapToMapnameStringConverter.cs" />
     <Compile Include="Services\WorldEditorService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\TileViewModel.cs" />
     <Compile Include="ViewModels\WorldEditorViewModel.cs" />
     <Compile Include="Views\TestPanel.xaml.cs">
       <DependentUpon>TestPanel.xaml</DependentUpon>

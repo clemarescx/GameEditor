@@ -9,6 +9,6 @@ namespace GameEditor.Models
         public bool IsSpawnPoint{ get; set; }
         public string CreatureToSpawn{ get; set; }
         public bool IsTransitionSpot{ get; set; }
-        public string DestinationMap{ get; set; }
+        public string DestinationAreaName{ get; set; }
     }
 }

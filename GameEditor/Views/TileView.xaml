@@ -4,26 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GameEditor.Views"
+             xmlns:services="clr-namespace:GameEditor.Services"
              mc:Ignorable="d"
              d:DesignHeight="300"
-             d:DesignWidth="300">
-    <Grid>
-        <Image Name="TerrainSprite"
-               Height="auto"
-               Width="100%"
-               Source="{Binding (DependencyProperty.terrainFilePath)}" />
-        <Image Name="WalkableSprite"
-               VerticalAlignment="Top"
-               HorizontalAlignment="Left"
-               Width="100%"
-               Visibility="{Binding IsPortal}"
-               Source="../Resources/tiles/logic/trigger_portal.png" />
-        <Image Name="SpawnSprite"
-               VerticalAlignment="Top"
-               HorizontalAlignment="Right"
-               Height="50%"
-               Width="50%"
-               Visibility="{Binding IsSpawn}"
-               Source="../Resources/tiles/logic/spawn_player.png" />
-    </Grid>
+             d:DesignWidth="300"
+             DataContext="{Binding Source={StaticResource Locator}, Path=TileView}">
+    <Border BorderBrush="Gray"
+            BorderThickness="1">
+        <Grid Height="50"
+              Width="50">
+            <TextBlock Text="{Binding SpriteName}" />
+            <Border Name="WalkableMarker"
+                    BorderBrush="DeepPink"
+                    BorderThickness="4"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Visibility="{Binding IsWalkable}" />
+            <!--        <Image Name="TerrainSprite"-->
+            <!--               Height="auto"-->
+            <!--               Width="100%"-->
+            <!--               Source="{Binding SpriteName}" />-->
+            <!--        <Image Name="SpawnSprite"-->
+            <!--               VerticalAlignment="Top"-->
+            <!--               HorizontalAlignment="Right"-->
+            <!--               Visibility="{Binding CreatureToSpawn}"-->
+            <!--               Source="../Resources/tiles/logic/spawn_player.png" />-->
+            <!--        <Image Name="PortalSprite"-->
+            <!--               VerticalAlignment="Top"-->
+            <!--               HorizontalAlignment="Right"-->
+            <!--               Visibility="{Binding CreatureToSpawn}"-->
+            <!--               Source="../Resources/tiles/logic/spawn_player.png" />-->
+        </Grid>
+    </Border>
 </UserControl>

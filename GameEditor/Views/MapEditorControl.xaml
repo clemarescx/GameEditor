@@ -5,13 +5,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GameEditor"
              xmlns:models="clr-namespace:GameEditor.Models"
+             xmlns:vms="clr-namespace:GameEditor.ViewModels"
+             xmlns:views="clr-namespace:GameEditor.Views"
              xmlns:services="clr-namespace:GameEditor.Services"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="800"
              DataContext="{Binding Source={StaticResource Locator}, Path=MapEditor}">
     <UserControl.Resources>
+        <Style x:Key="HorizontalListBox">
+            <Setter Property="ListBox.ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
         <services:StringToTerrainSpriteConverter x:Key="StringToTerrainSpriteConverter" />
+        <DataTemplate x:Key="TileTemplate"
+                      DataType="{x:Type vms:TileViewModel}">
+            <views:TileView />
+        </DataTemplate>
+        <DataTemplate x:Key="RowTemplate">
+            <ListBox BorderThickness="0"
+                     ItemsSource="{Binding}"
+                     Style="{StaticResource HorizontalListBox}"
+                     ItemTemplate="{StaticResource TileTemplate}" />
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <DockPanel Background="LightGray">
@@ -92,30 +115,40 @@
                                 BorderBrush="Gray"
                                 BorderThickness="1"
                                 Grid.Row="2">
-                            <StackPanel>
+                            <StackPanel DataContext="{Binding SelectedTile}">
                                 <Label Content="Tile Properties" />
                                 <DockPanel Margin="0,5">
                                     <Label Content="_Walkable:"
                                            Target="{Binding ElementName=TxtProperty}" />
-                                    <CheckBox Name="ChkWalkable" />
+                                    <CheckBox Name="ChkWalkable"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding Path=IsWalkable}" />
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Spawn location:"
-                                           Target="{Binding ElementName=TxtProperty}" />
-                                    <CheckBox Name="ChkSpawn" />
-                                </DockPanel>
-                                <DockPanel Margin="0,5">
-                                    <Label Content="_Creature:"
+                                    <Label Content="_Creature spawn:"
                                            Target="{Binding ElementName=TxtSpawnCreature}" />
+                                    <CheckBox Name="ChkSpawn"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding Path=IsSpawnPoint}" />
                                     <TextBox Name="TxtSpawnCreature"
-                                             TextWrapping="Wrap" />
+                                             TextWrapping="Wrap"
+                                             Visibility="{Binding Path=IsSpawnPoint}" />
                                 </DockPanel>
-                                
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Destination:"
+                                    <Label Content="_Portal cell:"
                                            Target="{Binding ElementName=TxtDestination}" />
-                                    <TextBox Name="TxtDestination"
-                                             TextWrapping="Wrap" />
+                                    <CheckBox Name="ChkPortal"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding Path=IsTransitionSpot}" />
+                                    <ComboBox Name="TxtDestination"
+                                              ItemsSource="{Binding Source={StaticResource Locator}, Path=MapEditor.OtherAreaMaps}"
+                                              Visibility="{Binding  Path=IsTransitionSpot}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Path=Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </DockPanel>
                             </StackPanel>
                         </Border>
@@ -127,7 +160,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Height="25">
-                
+
                 <Button Margin="2,0"
                         Content="Save"
                         Width="75"
@@ -145,14 +178,18 @@
                     Margin="5"
                     BorderBrush="Aquamarine"
                     BorderThickness="3">
-                <Grid>
-                    <Grid Margin="20"
-                          Name="TerrainMapGrid" />
-                    <Grid Margin="20"
-                          Name="LogicMapGrid" />
-                    <Grid Margin="20"
-                          Name="MouseEventGrid" />
-                </Grid>
+
+                <ListBox BorderThickness="0"
+                         ItemsSource="{Binding FlattenedAreaMap}"
+                         ItemTemplate="{StaticResource RowTemplate}" />
+                <!--                <DataGrid Margin="20"-->
+                <!--                          Name="TerrainMapGrid"-->
+                <!--                          >-->
+                <!--                    <ItemsControl ItemsSource="{Binding FlattenedAreaMap }">-->
+                <!--                        <views:TileView/>-->
+                <!--                    </ItemsControl>-->
+                <!--                </DataGrid>-->
+
             </Border>
             <StackPanel Grid.Row="1"
                         Grid.Column="1"

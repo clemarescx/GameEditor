@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
@@ -13,27 +12,29 @@ using GameEditor.Messages;
 using GameEditor.Models;
 using GameEditor.Properties;
 using GameEditor.Services;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 
 namespace GameEditor.ViewModels
 {
     public class WorldEditorViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private int mapNamingCounter = 1;
+        // This is for the MVVMlight framework, not really necessary as we don't use the
+        // "design" implementation 
         private readonly IWorldEditorService _worldEditorService;
+
         private ObservableCollection<AreaMap> _areaMaps;
         private RelayCommand _btnAddMapCommand;
         private RelayCommand _btnCreateWorldCommand;
-
         private RelayCommand _btnLoadWorldCommand;
         private RelayCommand _btnPrintWorldCommand;
         private RelayCommand _btnRemoveMapCommand;
         private RelayCommand _btnSaveWorldCommand;
-        private RelayCommand _btnWorldDebugCommand;
-        private WorldMap _worldMap;
-        private AreaMap _selectedMap;
 
+        private int _mapNamingCounter = 1;
+        private AreaMap _selectedMap;
+        private WorldMap _worldMap;
+
+        // All member data with OnPropertyChanged()
+        // are watched for updates by the XAML view
         public ObservableCollection<AreaMap> AreaMaps
         {
             get => _areaMaps;
@@ -41,6 +42,7 @@ namespace GameEditor.ViewModels
             {
                 _areaMaps = value;
                 OnPropertyChanged();
+                Messenger.Default.Send(new AreamapsAvailableMessage(new List<AreaMap>(_areaMaps)));
             }
         }
 
@@ -54,19 +56,23 @@ namespace GameEditor.ViewModels
             }
         }
 
-        public AreaMap SelectedMap {
+        /// <summary>
+        ///     The map currently selected in the listbox.
+        ///     Sent to the Map Editor as soon as it is selected
+        /// </summary>
+        public AreaMap SelectedMap
+        {
             get => _selectedMap;
-            set {
+            set
+            {
                 _selectedMap = value;
                 Messenger.Default.Send(new MapSelectedMessage(_selectedMap));
                 OnPropertyChanged();
             }
         }
 
-        public RelayCommand BtnLoadWorldCommand
-        {
-            get { return _btnLoadWorldCommand ?? ( _btnLoadWorldCommand = new RelayCommand(LoadWorld) ); }
-        }
+        public RelayCommand BtnLoadWorldCommand =>
+            _btnLoadWorldCommand ?? ( _btnLoadWorldCommand = new RelayCommand(LoadWorld) );
 
         public RelayCommand BtnSaveWorldCommand
         {
@@ -76,6 +82,7 @@ namespace GameEditor.ViewModels
                        ?? ( _btnSaveWorldCommand = new RelayCommand(SaveWorld, () => WorldMap != null) );
             }
         }
+
         public RelayCommand BtnAddMapCommand
         {
             get
@@ -83,23 +90,8 @@ namespace GameEditor.ViewModels
                 return _btnAddMapCommand
                        ?? ( _btnAddMapCommand = new RelayCommand(
                                 () => {
-                                    var newmapname = $"newMap{mapNamingCounter++}";
-                                    Console.WriteLine(@"Creating " + newmapname);
-                                    AreaMaps.Add(new AreaMap(8, newmapname));
-                                },
-                                () => WorldMap != null) );
-            }
-        }
-
-        public RelayCommand BtnWorldDebugCommand
-        {
-            get
-            {
-                return _btnWorldDebugCommand
-                       ?? ( _btnWorldDebugCommand = new RelayCommand(
-                                () => {
-                                    Console.WriteLine("Change world name to 'potatoes'");
-                                    WorldMap.Name = "World potatoes";
+                                    var newmapname = $"newMap{_mapNamingCounter++}";
+                                    AreaMaps.Add(new AreaMap(newmapname));
                                 },
                                 () => WorldMap != null) );
             }
@@ -116,10 +108,8 @@ namespace GameEditor.ViewModels
             }
         }
 
-        public RelayCommand BtnCreateWorldCommand
-        {
-            get { return _btnCreateWorldCommand ?? ( _btnCreateWorldCommand = new RelayCommand(CreateWorld) ); }
-        }
+        public RelayCommand BtnCreateWorldCommand =>
+            _btnCreateWorldCommand ?? ( _btnCreateWorldCommand = new RelayCommand(CreateWorld) );
 
         public RelayCommand BtnWorldPrintCommand
         {
@@ -134,18 +124,21 @@ namespace GameEditor.ViewModels
         {
             _worldEditorService = service;
             AreaMaps = new ObservableCollection<AreaMap>();
-            Messenger.Default.Register<SaveMapMessage>(this,
+
+            // inter-viewModel messaging system 
+            // with MVVMlight ;)
+            Messenger.Default.Register<SaveMapMessage>(
+                this,
                 msg => {
                     if(AreaMaps.Contains(SelectedMap))
                     {
                         Console.WriteLine("Removing '{0}'", SelectedMap.Name);
                         AreaMaps.Remove(SelectedMap);
                         AreaMaps.Add(msg.SavedMap);
+                        SelectedMap = msg.SavedMap;
                     }
                 });
         }
-
-        public new event PropertyChangedEventHandler PropertyChanged;
 
         private void CreateWorld()
         {
@@ -170,17 +163,8 @@ namespace GameEditor.ViewModels
 
             WorldMap = new WorldMap("newWorld");
             AreaMaps.Clear();
-            AreaMaps.Add(new AreaMap(8, "Start_Area"));
+            AreaMaps.Add(new AreaMap("Start_Area"));
             PrintWorld();
-        }
-        
-        
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            Console.WriteLine($"changed {propertyName}");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void PrintWorld()
@@ -192,45 +176,6 @@ namespace GameEditor.ViewModels
             Console.WriteLine($@"Content of AreaMaps:");
             foreach(var m in AreaMaps)
                 Console.WriteLine($@"	{m.Name}");
-        }
-
-        private void dLoadWorld()
-        {
-            if(WorldMap != null)
-            {
-                var res = MessageBox.Show(
-                    "Would you like to save the current world?",
-                    "Load world",
-                    MessageBoxButton.YesNoCancel,
-                    MessageBoxImage.Warning);
-                switch(res)
-                {
-                    case MessageBoxResult.Yes:
-                        SaveWorld();
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                    default:
-                        return;
-                }
-            }
-
-            var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
-
-            if(openFileDialog.ShowDialog() != true)
-                return;
-
-            try
-            {
-                var jsonZone = File.ReadAllText(openFileDialog.FileName);
-                WorldMap = JsonConvert.DeserializeObject<WorldMap>(jsonZone);
-                AreaMaps = new ObservableCollection<AreaMap>(WorldMap.Areas);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Error: \n" + ex.Message);
-                throw;
-            }
         }
 
         // "Proof of concept" to use the Service class
@@ -276,31 +221,17 @@ namespace GameEditor.ViewModels
         private void SaveWorld()
         {
             WorldMap.Areas = AreaMaps.ToList();
-            var jsonConvertZone = JsonConvert.SerializeObject(WorldMap);
-
-            var filename = string.Empty.Equals(WorldMap.Name) || null == WorldMap.Name ? "newWorld" : WorldMap.Name;
-            filename += ".json";
-
-            var saveFileDialog = new SaveFileDialog{
-                FileName = filename,
-                InitialDirectory = Directory.GetCurrentDirectory(),
-                Filter = "JSON file (*.json)|*.json"
-            };
-            WorldMap.Name = saveFileDialog.SafeFileName;
-
-            if(saveFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
-                    Console.WriteLine("Saved!");
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show("Error: \n" + ex.Message);
-                }
-            }
+            _worldEditorService.SaveWorld(WorldMap);
             PrintWorld();
         }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            Console.WriteLine($"changed {propertyName}");
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public new event PropertyChangedEventHandler PropertyChanged;
     }
 }

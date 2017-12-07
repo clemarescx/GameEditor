@@ -8,5 +8,6 @@ namespace GameEditor.Services
     public interface IWorldEditorService
     {
         void LoadWorld(Action<WorldMap, Exception> callback);
+        void SaveWorld(WorldMap map);
     }
 }

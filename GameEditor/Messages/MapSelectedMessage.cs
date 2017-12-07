@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using System.Collections.Generic;
+using GalaSoft.MvvmLight.Messaging;
 using GameEditor.Models;
 
 namespace GameEditor.Messages

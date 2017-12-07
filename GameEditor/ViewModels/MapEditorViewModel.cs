@@ -7,55 +7,44 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
+using GameEditor.Messages;
 using GameEditor.Models;
 using GameEditor.Properties;
 using GameEditor.Services;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+
 //using GalaSoft.MvvmLight.Command; 
-// ^^^^  using this piece of ***** instead of CommandWpf below 
-// cost me 4 hours in debugging !! 
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Messaging;
-using GameEditor.Messages;
+// ^^^^  using this piece of ***** instead of CommandWpf 
+// cost me 4 hours in debugging!
 
 
 namespace GameEditor.ViewModels
 {
     public class MapEditorViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        public const string TerrainTilesPropertyName = "TerrainTiles";
-        public const string LogicTilesPropertyName = "LogicTiles";
-        public const string BrushTilePropertyName = "BrushTile";
-        public const string MapPropertyName = "AreaMap";
-
         private readonly IMapEditorService _mapEditorService;
 
 
         private AreaMap _areaMap;
         private string _brushTile;
+        private List<ObservableCollection<Tile>> _flattenedAreaMap = new List<ObservableCollection<Tile>>();
         private Dictionary<string, BitmapImage> _logicTiles;
         private string _mapName;
+        private ObservableCollection<AreaMap> _otherAreaMaps;
+        private Tile _selectedTile;
 
         private Dictionary<string, BitmapImage> _terrainSprites;
         public ObservableCollection<string> TerrainSpriteNames{ get; set; }
-
-        public string MapName
-        {
-            get => _mapName;
-            set
-            {
-                _mapName = value;
-                OnPropertyChanged();
-            }
-        }
 
         public RelayCommand BtnPrintMapCommand{ get; }
         public RelayCommand BtnImportMapCommand{ get; }
         public RelayCommand BtnExportMapCommand{ get; }
         public RelayCommand BtnClearMapCommand{ get; }
         public RelayCommand BtnDebugCommand{ get; }
-        public RelayCommand BtnSaveMapCommand { get; }
+        public RelayCommand BtnSaveMapCommand{ get; }
 
 
         public AreaMap AreaMap
@@ -68,6 +57,16 @@ namespace GameEditor.ViewModels
                     return;
 
                 _areaMap = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<ObservableCollection<Tile>> FlattenedAreaMap
+        {
+            get => _flattenedAreaMap;
+            set
+            {
+                _flattenedAreaMap = value;
                 OnPropertyChanged();
             }
         }
@@ -105,14 +104,43 @@ namespace GameEditor.ViewModels
                 OnPropertyChanged();
             }
         }
+        public Tile SelectedTile
+        {
+            get => _selectedTile;
+            set
+            {
+                _selectedTile = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<AreaMap> OtherAreaMaps
+        {
+            get => _otherAreaMaps;
+            set
+            {
+                _otherAreaMaps = value;
+                _otherAreaMaps.Remove(_areaMap);
+                OnPropertyChanged();
+            }
+        }
 
 
         public MapEditorViewModel(IMapEditorService service)
         {
-            //            _mapEditorService = new MapEditorService();
             _mapEditorService = service;
-            Messenger.Default.Register<MapSelectedMessage>(this, msg => AreaMap = msg.SelectedMap);
-            
+            Messenger.Default.Register<MapSelectedMessage>(
+                this,
+                msg => {
+                    AreaMap = msg.SelectedMap;
+                    if(AreaMap != null)
+                        AreamapToBindableGrid();
+                });
+            Messenger.Default.Register<AreamapsAvailableMessage>(
+                this,
+                msg => {
+                    OtherAreaMaps = new ObservableCollection<AreaMap>(msg.AllMaps);
+                });
+
             service.GetTerrainTiles(
                 (sprites, error) => {
                     if(error != null)
@@ -135,8 +163,19 @@ namespace GameEditor.ViewModels
             BtnImportMapCommand = new RelayCommand(ImportMap);
             BtnExportMapCommand = new RelayCommand(ExportMap, () => AreaMap != null);
             BtnClearMapCommand = new RelayCommand(ClearMap);
-            BtnDebugCommand = new RelayCommand(() => AreaMap = new AreaMap(8, "CreatedfromDebug"));
+            BtnDebugCommand = new RelayCommand(() => AreaMap = new AreaMap("CreatedfromDebug"));
             BtnSaveMapCommand = new RelayCommand(SaveMap);
+        }
+
+        private void AreamapToBindableGrid()
+        {
+            for(var i = 0; i < AreaMap.Grid.GetLength(0); i++)
+            {
+                FlattenedAreaMap.Add(new ObservableCollection<Tile>());
+
+                for(var j = 0; j < AreaMap.Grid.GetLength(1); j++)
+                    FlattenedAreaMap[ i ].Add(AreaMap.Grid[ i, j ]);
+            }
         }
 
         private void SaveMap()
