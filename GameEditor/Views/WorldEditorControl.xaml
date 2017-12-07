@@ -1,12 +1,86 @@
 ﻿<UserControl x:Class="GameEditor.WorldEditorControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GameEditor"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:services="clr-namespace:GameEditor.Services"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:command="http://www.galasoft.ch/mvvmlight"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="600"
+             DataContext="{Binding Source={StaticResource Locator}, Path=WorldEditor}">
+    <UserControl.Resources>
+        <services:MapToMapnameStringConverter x:Key="MapToMapnameStringConverter" />
+    </UserControl.Resources>
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <WrapPanel Grid.Row="1"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2"
+                   Orientation="Horizontal"
+                   Margin="5">
+            <Button Margin="5,0"
+                    Content="Create world"
+                    Command="{Binding BtnCreateWorldCommand}" />
+            <Button Margin="5,0"
+                    Content="Load world"
+                    Command="{Binding BtnLoadWorldCommand}" />
+            <Button Margin="5,0"
+                    Content="Save world"
+                    Command="{Binding BtnSaveWorldCommand}" />
+            <Button Margin="5,0"
+                    Content="Debug button"
+                    Command="{Binding BtnWorldDebugCommand}" />
+            <Button Margin="5,0"
+                    Content="Print World content"
+                    Command="{Binding BtnWorldPrintCommand}" />
+
+        </WrapPanel>
+        <StackPanel Grid.Row="2"
+                    Grid.Column="1">
+            <Button Content="Add map"
+                    Command="{Binding BtnAddMapCommand}" />
+            <Button Content="Remove map"
+                    Command="{Binding BtnRemoveMapCommand}" />
+        </StackPanel>
+        <ListBox Grid.Row="2"
+                 Grid.Column="2"
+                 VerticalAlignment="Top"
+                 ItemsSource="{Binding AreaMaps}"
+                 SelectedItem="{Binding SelectedMap}"
+                 Height="150"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 SelectionMode="Single">
+<!--            <i:Interaction.Triggers>-->
+<!--                <i:EventTrigger EventName="SelectionChanged">-->
+<!--                    <command:EventToCommand Command="{Binding LbOnSelectionChangedCommand}" PassEventArgsToCommand="True" />-->
+<!--                </i:EventTrigger>-->
+<!--            </i:Interaction.Triggers>-->
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource MapToMapnameStringConverter}}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

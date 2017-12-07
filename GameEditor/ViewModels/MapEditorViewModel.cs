@@ -7,7 +7,10 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+//using GalaSoft.MvvmLight.Command; 
+// ^^^^  using this piece of ***** instead of CommandWpf below 
+// cost me 4 hours in debugging !! 
+using GalaSoft.MvvmLight.CommandWpf; 
 using GameEditor.Models;
 using GameEditor.Properties;
 using GameEditor.Services;
@@ -21,18 +24,19 @@ namespace GameEditor.ViewModels
         public const string TerrainTilesPropertyName = "TerrainTiles";
         public const string LogicTilesPropertyName = "LogicTiles";
         public const string BrushTilePropertyName = "BrushTile";
-        public const string MapPropertyName = "Map";
+        public const string MapPropertyName = "AreaMap";
 
-        private static MapEditorService _mapEditorService;
-        private Tile _brushTile;
+//        private static MapEditorService _mapEditorService;
+        private readonly IMapEditorService _mapEditorService;
+//        private Tile _brushTile;
+        private string _brushTile;
         private Dictionary<string, BitmapImage> _logicTiles;
 
 
-        private Map _map;
+        private AreaMap _areaMap;
         private string _mapName;
 
         private Dictionary<string, BitmapImage> _terrainSprites;
-        //        public ObservableCollection<TerrainTile> TerrainTiles { get; set; }
         public ObservableCollection<string> TerrainSpriteNames{ get; set; }
 
         public string MapName
@@ -52,17 +56,17 @@ namespace GameEditor.ViewModels
         public RelayCommand BtnDebugCommand{ get; }
 
 
-        public Map Map
+        public AreaMap AreaMap
         {
-            get => _map;
+            get => _areaMap;
             set
             {
-                _map = value;
+                _areaMap = value;
                 OnPropertyChanged();
             }
         }
 
-        public Tile BrushTile
+        public string BrushTile
         {
             get => _brushTile;
             set
@@ -80,7 +84,6 @@ namespace GameEditor.ViewModels
                 if(_terrainSprites == value) return;
 
                 _terrainSprites = value;
-                //                RaisePropertyChanged(TerrainTilesPropertyName);
                 OnPropertyChanged();
             }
         }
@@ -93,7 +96,6 @@ namespace GameEditor.ViewModels
                 if(_logicTiles == value) return;
 
                 _logicTiles = value;
-                //                RaisePropertyChanged(LogicTilesPropertyName);
                 OnPropertyChanged();
             }
         }
@@ -101,7 +103,8 @@ namespace GameEditor.ViewModels
 
         public MapEditorViewModel(IMapEditorService service)
         {
-            _mapEditorService = new MapEditorService();
+//            _mapEditorService = new MapEditorService();
+            _mapEditorService = service;
 
             service.GetTerrainTiles(
                 (sprites, error) => {
@@ -121,23 +124,17 @@ namespace GameEditor.ViewModels
                         LogicTiles = new Dictionary<string, BitmapImage>(sprites);
                 });
 
-            Map = new Map(8, "newMap");
-            MapName = Map.Name;
-            var defaultTile = new Tile();
-            defaultTile.SpriteName = "sand_1.png";
-            Map.Fill(defaultTile);
-            BtnPrintMapCommand = new RelayCommand(PrintMap, () => Map != null);
+            //            AreaMap = new AreaMap(8, "newMap");
+            //            MapName = AreaMap.Name;
+            //            var defaultTile = new Tile();
+            //            defaultTile.SpriteName = "sand_1.png";
+            //            AreaMap.Fill(defaultTile);
+            BtnPrintMapCommand = new RelayCommand(PrintMap, () => AreaMap != null);
             BtnLoadMapCommand = new RelayCommand(LoadMap);
-            BtnSaveMapCommand = new RelayCommand(SaveMap, () => Map != null);
+            BtnSaveMapCommand = new RelayCommand(SaveMap, () => AreaMap != null);
             BtnClearMapCommand = new RelayCommand(ClearMap);
-            BtnDebugCommand = new RelayCommand(() => Map.Name = "potatoes");
+            BtnDebugCommand = new RelayCommand(() => AreaMap = new AreaMap(8, "CreatedfromDebug"));
         }
-
-
-        //        public void RaisePropertyChanged(string propertyName)
-        //        {
-        //            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -148,12 +145,12 @@ namespace GameEditor.ViewModels
 
         private void PrintMap()
         {
-            Console.WriteLine($@"Content of map '{Map.Name}':");
+            Console.WriteLine($@"Content of map '{AreaMap.Name}':");
             Console.WriteLine(@"Done.");
-            for(var i = 0; i < Map.Rows; i++)
+            for(var i = 0; i < AreaMap.Rows; i++)
             {
                 Console.Write("\t");
-                for(var j = 0; j < Map.Columns; j++) Console.Write($@"{Map.Grid[ i, j ]}, ");
+                for(var j = 0; j < AreaMap.Columns; j++) Console.Write($@"{AreaMap.Grid[ i, j ]}, ");
 
                 Console.WriteLine();
             }
@@ -172,9 +169,9 @@ namespace GameEditor.ViewModels
             try
             {
                 var jsonZone = File.ReadAllText(openFileDialog.FileName);
-                Map = JsonConvert.DeserializeObject<Map>(jsonZone);
+                AreaMap = JsonConvert.DeserializeObject<AreaMap>(jsonZone);
 
-                //TxtMapName.Text = Map.SpriteName;
+                //TxtMapName.Text = AreaMap.SpriteName;
                 //DrawMap();
             }
             catch(Exception ex)
@@ -187,9 +184,9 @@ namespace GameEditor.ViewModels
         // Save to JSON
         private void SaveMap()
         {
-            var jsonConvertZone = JsonConvert.SerializeObject(Map);
+            var jsonConvertZone = JsonConvert.SerializeObject(AreaMap);
 
-            var filename = string.Empty.Equals(Map.Name) || null == Map.Name ? "newMap" : Map.Name;
+            var filename = string.Empty.Equals(AreaMap.Name) || null == AreaMap.Name ? "newMap" : AreaMap.Name;
             filename += ".json";
 
             var saveFileDialog = new SaveFileDialog{
@@ -197,7 +194,7 @@ namespace GameEditor.ViewModels
                 InitialDirectory = Directory.GetCurrentDirectory(),
                 Filter = "JSON file (*.json)|*.json"
             };
-            Map.Name = saveFileDialog.SafeFileName;
+            AreaMap.Name = saveFileDialog.SafeFileName;
 
             if(saveFileDialog.ShowDialog() == true)
             {
@@ -214,7 +211,7 @@ namespace GameEditor.ViewModels
 
         private void ClearMap()
         {
-            Map.Fill(null);
+            AreaMap.Fill(null);
         }
 
 

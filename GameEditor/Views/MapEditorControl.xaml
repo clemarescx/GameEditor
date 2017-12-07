@@ -30,8 +30,8 @@
                         <Label Content="_Name:"
                                Target="{Binding ElementName=TxtMapName}" />
                         <TextBox Name="TxtMapName"
-                                 TextWrapping="Wrap" 
-                                 Text="{Binding Map.Name, Mode=TwoWay}"/>
+                                 TextWrapping="Wrap"
+                                 Text="{Binding AreaMap.Name, Mode=TwoWay}" />
                     </DockPanel>
 
                     <WrapPanel Margin="0,5">
@@ -40,8 +40,7 @@
                         <Border BorderBrush="Gray"
                                 BorderThickness="1">
                             <Image Height="32"
-                                   Source="{Binding 
-                                Path=BrushTile, 
+                                   Source="{Binding BrushTile,                                
                                 Converter={StaticResource StringToTerrainSpriteConverter}, 
                                 UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
@@ -58,11 +57,12 @@
                             <StackPanel x:Name="TerrainTilePanel">
                                 <Label Content="Terrain Sprites" />
                                 <ListBox x:Name="LbTerrainTiles"
-                                         ItemsSource="{Binding Path=TerrainSpriteNames}"
+                                         ItemsSource="{Binding TerrainSpriteNames}"
                                          MaxHeight="150"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         SelectedIndex="0"
                                          SelectionMode="Single"
-                                         SelectionChanged="TilesListBox_OnSelectionChanged">
+                                         SelectedItem="{Binding BrushTile, Mode=TwoWay}">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="Padding"
@@ -79,9 +79,9 @@
                                         <DataTemplate>
                                             <Border BorderBrush="Gray"
                                                     BorderThickness="1">
-                                                <Image Source="{Binding Converter={StaticResource StringToTerrainSpriteConverter}}"
-                                                       Height="32" />
-<!--                                                <TextBlock Text="{Binding}"></TextBlock>-->
+                                                <Image
+                                                    Source="{Binding Converter={StaticResource StringToTerrainSpriteConverter}}"
+                                                    Height="32" />
                                             </Border>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -95,16 +95,22 @@
                             <StackPanel>
                                 <Label Content="Tile Properties" />
                                 <DockPanel Margin="0,5">
+                                    <Label Content="_Walkable:"
+                                           Target="{Binding ElementName=TxtProperty}" />
+                                    <CheckBox Name="ChkWalkable" />
+                                </DockPanel>
+                                <DockPanel Margin="0,5">
+                                    <Label Content="_Spawn location:"
+                                           Target="{Binding ElementName=TxtProperty}" />
+                                    <CheckBox Name="ChkSpawn" />
+                                </DockPanel>
+                                <DockPanel Margin="0,5">
                                     <Label Content="_Creature:"
                                            Target="{Binding ElementName=TxtSpawnCreature}" />
                                     <TextBox Name="TxtSpawnCreature"
                                              TextWrapping="Wrap" />
                                 </DockPanel>
-                                <DockPanel Margin="0,5">
-                                    <Label Content="_Walkable:"
-                                           Target="{Binding ElementName=TxtProperty}" />
-                                    <CheckBox Name="ChkWalkable" />
-                                </DockPanel>
+                                
                                 <DockPanel Margin="0,5">
                                     <Label Content="_Destination:"
                                            Target="{Binding ElementName=TxtDestination}" />

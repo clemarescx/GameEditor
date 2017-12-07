@@ -95,7 +95,7 @@
     <Compile Include="Models\WorldMap.cs" />
     <Compile Include="Services\IWorldEditorService.cs" />
     <Compile Include="Services\IMapEditorService.cs" />
-    <Compile Include="Models\Map.cs" />
+    <Compile Include="Models\AreaMap.cs" />
     <Compile Include="Models\Tile.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="Services\SpriteLoader.cs" />
     <Compile Include="Services\MapEditorService.cs" />
+    <Compile Include="Services\MapToMapnameStringConverter.cs" />
     <Compile Include="Services\WorldEditorService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\WorldEditorViewModel.cs" />

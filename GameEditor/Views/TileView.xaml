@@ -16,12 +16,14 @@
                VerticalAlignment="Top"
                HorizontalAlignment="Left"
                Width="100%"
+               Visibility="{Binding IsPortal}"
                Source="../Resources/tiles/logic/trigger_portal.png" />
         <Image Name="SpawnSprite"
                VerticalAlignment="Top"
                HorizontalAlignment="Right"
                Height="50%"
                Width="50%"
+               Visibility="{Binding IsSpawn}"
                Source="../Resources/tiles/logic/spawn_player.png" />
     </Grid>
 </UserControl>

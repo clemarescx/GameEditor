@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace GameEditor.Models
 {
-    public class Map
+    public class AreaMap
     {
         public int Rows => Grid.GetLength(0);
         public int Columns => Grid.GetLength(1);
@@ -17,7 +17,7 @@ namespace GameEditor.Models
 
         public string Name{ get; set; }
 
-        public Map(int rows, int columns, string name)
+        public AreaMap(int rows, int columns, string name)
         {
 //            TerrainSpriteNameTable = new Dictionary<int, string>();
 //            Grid = new int[rows, columns];
@@ -25,7 +25,7 @@ namespace GameEditor.Models
         }
 
         [JsonConstructor]
-        public Map(int size, string name) : this(size, size, name)
+        public AreaMap(int size, string name) : this(size, size, name)
         {
             Name = name;
         }

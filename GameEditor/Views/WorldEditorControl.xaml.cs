@@ -3,7 +3,7 @@
 namespace GameEditor
 {
     /// <summary>
-    /// Interaction logic for WorldEditorControl.xaml
+    ///     Interaction logic for WorldEditorControl.xaml
     /// </summary>
     public partial class WorldEditorControl : UserControl
     {

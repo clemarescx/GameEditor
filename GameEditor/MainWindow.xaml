@@ -15,7 +15,7 @@
             <TabItem Header="World Editor">
                 <local:WorldEditorControl />
             </TabItem>
-            <TabItem Header="Map Editor">
+            <TabItem Header="AreaMap Editor">
                 <local:MapEditorControl />
             </TabItem>
             <TabItem Header="Character Editor">

@@ -23,7 +23,7 @@ namespace GameEditor
 //        private static MapEditorService _mapEditorService;
 
 
-        private Map Map{ get; set; }
+        private AreaMap AreaMap{ get; set; }
 
         public MapEditorControl()
         {
@@ -46,9 +46,9 @@ namespace GameEditor
 
         private void DrawMap()
         {
-            for(var i = 0; i < Map.Rows; i++)
+            for(var i = 0; i < AreaMap.Rows; i++)
             {
-                for(var j = 0; j < Map.Columns; j++)
+                for(var j = 0; j < AreaMap.Columns; j++)
                 {
                     UpdateTileAt(i,j);
                 }
@@ -58,9 +58,9 @@ namespace GameEditor
         private void UpdateTileAt(int row, int column)
         {
             var terrainImg = new Image();
-//            var tilevalue = Map.Grid[row, column];
-//            var tilename = Map.TerrainSpriteNameTable[tilevalue];
-            var tilename = Map.Grid[ row, column ].SpriteName;
+//            var tilevalue = AreaMap.Grid[row, column];
+//            var tilename = AreaMap.TerrainSpriteNameTable[tilevalue];
+            var tilename = AreaMap.Grid[ row, column ].SpriteName;
 //            terrainImg.Source = _mapEditorService.GetTerrainSprite(tilename);
             terrainImg.PreviewMouseDown += TerrainMapGrid_OnMouseDown;
             AddToGrid(TerrainMapGrid, row, column, terrainImg);
@@ -81,18 +81,6 @@ namespace GameEditor
             for(var j = 0; j < cols; j++) tileGrid.ColumnDefinitions.Add(new ColumnDefinition{ Width = spacing });
         }
 
-        
-
-        // Change the tile brush according to selected tile in the lists
-        private void TilesListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //			var lb = sender as ListBox;
-            //			var selected = (Tile)lb?.SelectedItem;
-            //			BrushTile = selected;
-
-            //			Console.WriteLine($@"Selected: {selected?.SpriteName}");
-        }
-
 
         // the "paint" function - applies the current selected tile's sprite to the
         // terrain grid
@@ -106,15 +94,15 @@ namespace GameEditor
                 //				Console.WriteLine($@"Grid clicked in cell {row},{col}");
                 //				var paintbrushTileName = BrushTile.SpriteName;
 
-                //				if(!Map.TerrainSpriteNameTable.Contains(paintbrushTileName))
+                //				if(!AreaMap.TerrainSpriteNameTable.Contains(paintbrushTileName))
                 //				{
                 //					 if the sprite has not been used for this map before, add it to the index table
-                //					Console.WriteLine($@"{paintbrushTileName} added to Map's tile index");
-                //					Map.TerrainSpriteNameTable.Add(paintbrushTileName);
+                //					Console.WriteLine($@"{paintbrushTileName} added to AreaMap's tile index");
+                //					AreaMap.TerrainSpriteNameTable.Add(paintbrushTileName);
                 //				}
 
                 //				 update both the model and the view
-                //				Map.Grid[ row, col ] = Map.TerrainSpriteNameTable.IndexOf(paintbrushTileName);
+                //				AreaMap.Grid[ row, col ] = AreaMap.TerrainSpriteNameTable.IndexOf(paintbrushTileName);
                 //				image.Source = BrushTile.TileImage;
             }
         }

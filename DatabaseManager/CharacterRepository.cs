@@ -22,7 +22,7 @@ namespace DatabaseManager{
 
 		public void AddCharacter(CharacterTest newChar){
 			if(Characters.Exists(c => c.Name == newChar.Name)){
-				Console.WriteLine("Character '{0}' already exists in the database. Pick another name.", newChar.Name);
+				Console.WriteLine(@"Selected:{0}", newChar.Name);
 				return;
 			}
 			Characters.Add(newChar);

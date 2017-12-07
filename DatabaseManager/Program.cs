@@ -18,7 +18,7 @@ namespace DatabaseManager{
 
 			var character = new CharacterTest{ Name = "Harvey McPotato", Strength = 10 };
 
-			Console.WriteLine("\nAdding '{0}'...", character.Name);
+			Console.WriteLine(@"Selected:{0}", character.Name);
 			characterRepository.AddCharacter(character);
 
 			Console.WriteLine(@"Done.");
