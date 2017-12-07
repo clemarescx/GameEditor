@@ -13,8 +13,7 @@ namespace GameEditor.ViewModels
     /// </summary>
     public partial class ViewModelLocator
     {
-        public MapEditorModel MapEditor => ServiceLocator.Current.GetInstance<MapEditorModel>();
-
+        
         /// <summary>
         ///     Gets the MainViewModel property.
         /// </summary>
@@ -23,6 +22,8 @@ namespace GameEditor.ViewModels
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        public MapEditorViewModel MapEditor => ServiceLocator.Current.GetInstance<MapEditorViewModel>();
+        public WorldEditorViewModel WorldEditor => ServiceLocator.Current.GetInstance<WorldEditorViewModel>();
 
         /// <summary>
         ///     Initializes a new instance of the ViewModelLocator class.
@@ -41,14 +42,16 @@ namespace GameEditor.ViewModels
             {
                 // Create run time view services and models
                 SimpleIoc.Default.Register<IMapEditorService, MapEditorService>();
+                SimpleIoc.Default.Register<IWorldEditorService, WorldEditorService>();
             }
 
-            SimpleIoc.Default.Register<MapEditorModel>();
+            SimpleIoc.Default.Register<MapEditorViewModel>();
+            SimpleIoc.Default.Register<WorldEditorViewModel>();
         }
 
         public static void Cleanup()
         {
-            // TODO Clear the ViewModels
+//            throw new System.NotImplementedException();
         }
     }
 }

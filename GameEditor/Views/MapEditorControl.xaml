@@ -11,7 +11,7 @@
              d:DesignWidth="800"
              DataContext="{Binding Source={StaticResource Locator}, Path=MapEditor}">
     <UserControl.Resources>
-        <services:TileToBitmapImageConverter x:Key="TileToBitmapImageConverter" />
+        <services:StringToTerrainSpriteConverter x:Key="StringToTerrainSpriteConverter" />
     </UserControl.Resources>
 
     <DockPanel Background="LightGray">
@@ -30,7 +30,8 @@
                         <Label Content="_Name:"
                                Target="{Binding ElementName=TxtMapName}" />
                         <TextBox Name="TxtMapName"
-                                 TextWrapping="Wrap" />
+                                 TextWrapping="Wrap" 
+                                 Text="{Binding Map.Name, Mode=TwoWay}"/>
                     </DockPanel>
 
                     <WrapPanel Margin="0,5">
@@ -41,7 +42,7 @@
                             <Image Height="32"
                                    Source="{Binding 
                                 Path=BrushTile, 
-                                Converter={StaticResource TileToBitmapImageConverter}, 
+                                Converter={StaticResource StringToTerrainSpriteConverter}, 
                                 UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
                     </WrapPanel>
@@ -57,7 +58,7 @@
                             <StackPanel x:Name="TerrainTilePanel">
                                 <Label Content="Terrain Sprites" />
                                 <ListBox x:Name="LbTerrainTiles"
-                                         ItemsSource="{Binding Path=TerrainTiles}"
+                                         ItemsSource="{Binding Path=TerrainSpriteNames}"
                                          MaxHeight="150"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          SelectionMode="Single"
@@ -75,36 +76,13 @@
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type models:Tile}">
+                                        <DataTemplate>
                                             <Border BorderBrush="Gray"
                                                     BorderThickness="1">
-                                                <Image Source="{Binding TileImage}"
+                                                <Image Source="{Binding Converter={StaticResource StringToTerrainSpriteConverter}}"
                                                        Height="32" />
+<!--                                                <TextBlock Text="{Binding}"></TextBlock>-->
                                             </Border>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </StackPanel>
-                        </Border>
-                        <Border BorderBrush="Gray"
-                                BorderThickness="1"
-                                Grid.Row="1">
-                            <StackPanel>
-                                <Label Content="Logic Sprites" />
-                                <ListBox x:Name="LbLogicTiles"
-                                         ItemsSource="{Binding Path=LogicTiles}"
-                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                         SelectionMode="Single"
-                                         SelectionChanged="TilesListBox_OnSelectionChanged">
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type models:Tile}">
-                                            <Image Source="{Binding TileImage}"
-                                                   Width="32" />
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
@@ -146,15 +124,16 @@
                 <Button Margin="2,0"
                         Content="Load"
                         Width="75"
-                        Click="BtnLoadMap" />
+                        Command="{Binding BtnLoadMapCommand}" />
                 <Button Margin="2,0"
                         Content="Save"
                         Width="75"
-                        Click="BtnSaveMap" />
+                        Command="{Binding BtnSaveMapCommand}" />
                 <Button Margin="2,0"
                         Content="Clear"
                         Width="75"
-                        Click="BtnClearMap" />
+                        Command="{Binding BtnClearMapCommand}" />
+
             </StackPanel>
 
             <Border Grid.Row="0"
@@ -180,6 +159,9 @@
                 <Button Margin="2,0"
                         Content="Print to console"
                         Command="{Binding BtnPrintMapCommand}" />
+                <Button Margin="2,0"
+                        Content="DebugFunctions"
+                        Command="{Binding BtnDebugCommand}" />
             </StackPanel>
         </Grid>
     </DockPanel>

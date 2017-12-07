@@ -4,7 +4,7 @@ namespace GameEditor.Models
 {
     public class Tile
     {
-        public string Name{ get; set; }
+        public string SpriteName{ get; set; }
         public bool IsWalkable{ get; set; }
         public bool IsSpawnPoint{ get; set; }
         public string CreatureToSpawn{ get; set; }

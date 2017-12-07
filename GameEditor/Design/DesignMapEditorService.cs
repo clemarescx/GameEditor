@@ -16,22 +16,19 @@ namespace GameEditor.Design
 		{
 			var filepath = _resourcesDirectory.GetFiles("*.png");
 			ErrorTile = new Tile{
-				TileImage = new BitmapImage(new Uri(filepath[ 0 ].FullName)),
-				Name = Path.GetFileNameWithoutExtension(filepath[ 0 ].Name)
+				SpriteName = Path.GetFileNameWithoutExtension(filepath[ 0 ].Name)
 			};
 		}
 
 
-		public void GetTerrainTiles(Action<IEnumerable<Tile>, Exception> callback)
-		{
-			var tiles = new List<Tile>{ ErrorTile };
-			callback(tiles, null);
-		}
+	    public void GetTerrainTiles(Action<Dictionary<string, BitmapImage>, Exception> callback)
+	    {
+	        throw new NotImplementedException();
+	    }
 
-		public void GetLogicTiles(Action<IEnumerable<Tile>, Exception> callback)
+	    public void GetLogicTiles(Action<Dictionary<string, BitmapImage>, Exception> callback)
 		{
-			var tiles = new List<Tile>{ ErrorTile, ErrorTile, ErrorTile };
-			callback(tiles, null);
-		}
-	}
+		    throw new NotImplementedException();
+        }
+    }
 }

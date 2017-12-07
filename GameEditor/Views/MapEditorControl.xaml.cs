@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using GameEditor.Models;
 using GameEditor.Services;
 using Microsoft.Win32;
@@ -17,50 +20,22 @@ namespace GameEditor
     /// </summary>
     public partial class MapEditorControl : UserControl, INotifyPropertyChanged
     {
-        private readonly MapEditorService _mapEditorService;
+//        private static MapEditorService _mapEditorService;
 
 
         private Map Map{ get; set; }
-        //		public ObservableCollection<TerrainTile> TerrainTiles{ get; set; }
-        //		public ObservableCollection<LogicTile> LogicTiles{ get; set; }
-        //		private Tile _brushTile;
-        //		public Tile BrushTile
-        //		{
-        //			get => _brushTile;
-        //			set
-        //			{
-        //				_brushTile = value;
-        //				OnPropertyChanged();
-        //			}
-        //		}
 
         public MapEditorControl()
         {
             InitializeComponent();
-            //			DataContext = this;
 
-            _mapEditorService = new MapEditorService();
-
-            //			TerrainTiles = new ObservableCollection<TerrainTile>(_mapEditorService.TerrainTiles.Values);
-            //			LogicTiles = new ObservableCollection<LogicTile>(_mapEditorService.LogicTiles.Values);
-            //			BrushTile = _mapEditorService.DefaultTile;
-
-            //			Map = new Map(8, _mapEditorService.DefaultTile.Name);
-            //			Map = new Map(8, "sand_1.png");
+//            _mapEditorService = new MapEditorService();
 
             TerrainMapGrid.ShowGridLines = true;
             TerrainMapGrid.Background = Brushes.YellowGreen;
+//            InitTileGrid(TerrainMapGrid);
 
-            //			InitTileGrid(TerrainMapGrid, Map.Rows, Map.Columns);
-
-            //			DrawMap(Map);
         }
-
-        //		[NotifyPropertyChangedInvocator]
-        //		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        //		{
-        //			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //		}
 
         private void AddToGrid(Grid grid, int row, int col, Image img)
         {
@@ -69,22 +44,26 @@ namespace GameEditor
             grid.Children.Add(img);
         }
 
-        private void DrawMap(Map map)
+        private void DrawMap()
         {
-            for(var i = 0; i < map.Rows; i++)
+            for(var i = 0; i < Map.Rows; i++)
             {
-                for(var j = 0; j < map.Columns; j++)
+                for(var j = 0; j < Map.Columns; j++)
                 {
-                    var terrainImg = new Image();
-                    var tilevalue = map.TerrainSpriteGrid[ i, j ];
-                    var tilename = map.TerrainSpriteNameTable[ tilevalue ];
-                    var tile = _mapEditorService.GetTerrainTile(tilename);
-                    terrainImg.Source = tile.TileImage;
-                    terrainImg.PreviewMouseDown += TerrainMapGrid_OnMouseDown;
-                    AddToGrid(TerrainMapGrid, i, j, terrainImg);
+                    UpdateTileAt(i,j);
                 }
             }
-            //TODO: render logic tiles
+        }
+
+        private void UpdateTileAt(int row, int column)
+        {
+            var terrainImg = new Image();
+//            var tilevalue = Map.Grid[row, column];
+//            var tilename = Map.TerrainSpriteNameTable[tilevalue];
+            var tilename = Map.Grid[ row, column ].SpriteName;
+//            terrainImg.Source = _mapEditorService.GetTerrainSprite(tilename);
+            terrainImg.PreviewMouseDown += TerrainMapGrid_OnMouseDown;
+            AddToGrid(TerrainMapGrid, row, column, terrainImg);
         }
 
         private void LogicMapGrid_OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -102,65 +81,7 @@ namespace GameEditor
             for(var j = 0; j < cols; j++) tileGrid.ColumnDefinitions.Add(new ColumnDefinition{ Width = spacing });
         }
 
-        // Load from JSON
-        private void BtnLoadMap(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
-
-            if(openFileDialog.ShowDialog() != true)
-                return;
-
-            try
-            {
-                var jsonZone = File.ReadAllText(openFileDialog.FileName);
-                Map = JsonConvert.DeserializeObject<Map>(jsonZone);
-
-                TxtMapName.Text = Map.Name;
-                DrawMap(Map);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Error: \n" + ex.Message);
-                throw;
-            }
-        }
-
-        // Save to JSON
-        private void BtnSaveMap(object sender, RoutedEventArgs e)
-        {
-            Map.Name = TxtMapName.Text;
-
-            var jsonConvertZone = JsonConvert.SerializeObject(Map);
-
-            var filename = string.Empty.Equals(Map.Name) || null == Map.Name ? "newMap" : Map.Name;
-            filename += ".json";
-
-            var saveFileDialog = new SaveFileDialog{
-                FileName = filename,
-                InitialDirectory = Directory.GetCurrentDirectory(),
-                Filter = "JSON file (*.json)|*.json"
-            };
-            Map.Name = saveFileDialog.SafeFileName;
-
-            if(saveFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show("Error: \n" + ex.Message);
-                }
-            }
-        }
-
-        // Reset map to tile "0", (sand_1.png by default)
-        private void BtnClearMap(object sender, RoutedEventArgs e)
-        {
-            Map.Fill(0);
-            DrawMap(Map);
-        }
+        
 
         // Change the tile brush according to selected tile in the lists
         private void TilesListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -169,7 +90,7 @@ namespace GameEditor
             //			var selected = (Tile)lb?.SelectedItem;
             //			BrushTile = selected;
 
-            //			Console.WriteLine($@"Selected: {selected?.Name}");
+            //			Console.WriteLine($@"Selected: {selected?.SpriteName}");
         }
 
 
@@ -177,16 +98,13 @@ namespace GameEditor
         // terrain grid
         private void TerrainMapGrid_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //			TODO: handle mouse events on the drawing grid through a superposed grid 
-            //				  then delegate according to "brushTile"'s subtype
-            //			
             if(sender != null)
             {
                 //				var image = sender as Image;
                 //				var row = (int)image.GetValue(Grid.RowProperty);
                 //				var col = (int)image.GetValue(Grid.ColumnProperty);
-                //				Console.WriteLine($@"TerrainSpriteGrid clicked in cell {row},{col}");
-                //				var paintbrushTileName = BrushTile.Name;
+                //				Console.WriteLine($@"Grid clicked in cell {row},{col}");
+                //				var paintbrushTileName = BrushTile.SpriteName;
 
                 //				if(!Map.TerrainSpriteNameTable.Contains(paintbrushTileName))
                 //				{
@@ -196,7 +114,7 @@ namespace GameEditor
                 //				}
 
                 //				 update both the model and the view
-                //				Map.TerrainSpriteGrid[ row, col ] = Map.TerrainSpriteNameTable.IndexOf(paintbrushTileName);
+                //				Map.Grid[ row, col ] = Map.TerrainSpriteNameTable.IndexOf(paintbrushTileName);
                 //				image.Source = BrushTile.TileImage;
             }
         }
@@ -205,5 +123,6 @@ namespace GameEditor
         /// Boilerplate event listener for WPF to update when some property changes
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }

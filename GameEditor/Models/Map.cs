@@ -6,34 +6,42 @@ namespace GameEditor.Models
 {
     public class Map
     {
-        public int Rows => TerrainSpriteGrid.GetLength(0);
-        public int Columns => TerrainSpriteGrid.GetLength(1);
+        public int Rows => Grid.GetLength(0);
+        public int Columns => Grid.GetLength(1);
 
-        public Dictionary<int, string> TerrainSpriteNameTable{ get; set; }
-        public Dictionary<int, string> CreatureNameTable{ get; set; }
-        public Dictionary<int, Point> CreatureSpawnTable{ get; set; }
-        public int[,] TerrainSpriteGrid{ get; set; }
-        public int[,] WalkableGrid{ get; set; }
-
+//        public Dictionary<int, string> TerrainSpriteNameTable{ get; set; }
+//        public Dictionary<int, string> CreatureNameTable{ get; set; }
+//        public Dictionary<int, Point> CreatureSpawnTable{ get; set; }
+//        public int[,] Grid{ get; set; }
+        public Tile[,] Grid{ get; set; }
 
         public string Name{ get; set; }
 
-        public Map(int rows, int columns)
+        public Map(int rows, int columns, string name)
         {
-            TerrainSpriteNameTable = new Dictionary<int, string>();
-            TerrainSpriteGrid = new int[rows, columns];
-            //			LogicTiles = new List<LogicTile>();
+//            TerrainSpriteNameTable = new Dictionary<int, string>();
+//            Grid = new int[rows, columns];
+            Grid = new Tile[rows, columns];
         }
 
         [JsonConstructor]
-        public Map(int size) : this(size, size)
-        { }
-
-        public void Fill(int value)
+        public Map(int size, string name) : this(size, size, name)
         {
-            for(var i = 0; i < Rows; i++)
-            for(var j = 0; j < Columns; j++)
-                TerrainSpriteGrid[ i, j ] = value;
+            Name = name;
+        }
+
+//        public void Fill(int value)
+//        {
+//            for(var i = 0; i < Rows; i++)
+//            for(var j = 0; j < Columns; j++)
+//                Grid[ i, j ] = value;
+//        }
+
+        public void Fill(Tile value)
+        {
+            for (var i = 0; i < Rows; i++)
+            for (var j = 0; j < Columns; j++)
+                Grid[i, j] = value;
         }
     }
 }

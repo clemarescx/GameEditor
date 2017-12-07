@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using GameEditor.Models;
 
 namespace GameEditor.Services
 {
@@ -12,68 +11,37 @@ namespace GameEditor.Services
     /// </summary>
     public class MapEditorService : IMapEditorService
     {
-        private const string TerrainTilesDirectoryPath = "/terrain";
-        private const string LogicTilesDirectoryPath = "/logic";
+        private readonly Dictionary<string, BitmapImage> LogicTiles;
+        private readonly Dictionary<string, BitmapImage> TerrainTiles;
 
-        private readonly DirectoryInfo _resourcesDirectory = new DirectoryInfo("Resources/tiles");
-        private Dictionary<string, BitmapImage> LogicTiles = new Dictionary<string, BitmapImage>();
-        private Dictionary<string, BitmapImage> TerrainTiles = new Dictionary<string, BitmapImage>();
-
-        //		public TerrainTile DefaultTile{ get; private set; }
-        //		public Tile ErrorTile{ get; private set; }
 
         /// <summary>
         ///     Acts as a flyweight for tile sprites.
         /// </summary>
         public MapEditorService()
         {
-            LoadTerrainTiles();
-            LoadLogicTiles();
-            //			SetDefaultTile();
-            //			SetErrorTile();
+            TerrainTiles = SpriteLoader.TerrainSprites;
+            LogicTiles = SpriteLoader.LogicSprites;
         }
 
-        //		private void SetErrorTile()
-        //		{
-        //			// "error.png" is located directly in the Resources folder.
-        //			var filepath = _resourcesDirectory.GetFiles("*.png");
-        //			ErrorTile = new Tile{
-        //				TileImage = new BitmapImage(new Uri(filepath[ 0 ].FullName)),
-        //				Name = Path.GetFileNameWithoutExtension(filepath[ 0 ].Name)
-        //			};
-        //		}
-        //
-        //		private void SetDefaultTile()
-        //		{
-        //			DefaultTile = GetTerrainTile("sand_1.png");
-        //		}
-
-        private void LoadTerrainTiles()
+        public ImageSource GetTerrainSprite(string tilename)
         {
-            var loader = new SpriteLoader(_resourcesDirectory + TerrainTilesDirectoryPath);
-            TerrainTiles = loader.Sprites;
+            return TerrainTiles[ tilename ];
         }
 
-        private void LoadLogicTiles()
+        public void GetDefaultTerrainSpriteName(Action<string, Exception> callback)
         {
-            var loader = new SpriteLoader(_resourcesDirectory + LogicTilesDirectoryPath);
-            LogicTiles = loader.Sprites;
+            callback("sand_1.png", null);
         }
 
-        public TerrainTile GetTerrainTile(string tileName)
+        public void GetTerrainTiles(Action<Dictionary<string, BitmapImage>, Exception> callback)
         {
-            return TerrainTiles[ tileName ] ?? TerrainTiles[ "sand_1.png" ];
+            callback(TerrainTiles, null);
         }
 
-        public void GetTerrainTiles(Action<IEnumerable<Tile>, Exception> callback)
+        public void GetLogicTiles(Action<Dictionary<string, BitmapImage>, Exception> callback)
         {
-            //TODO: 
-            callback(new List<Tile>(TerrainTiles.Values), null);
-        }
-
-        public void GetLogicTiles(Action<IEnumerable<Tile>, Exception> callback)
-        {
-            callback(new List<Tile>(LogicTiles.Values), null);
+            callback(LogicTiles, null);
         }
     }
 }

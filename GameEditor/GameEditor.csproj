@@ -92,6 +92,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignMapEditorService.cs" />
+    <Compile Include="Models\WorldMap.cs" />
+    <Compile Include="Services\IWorldEditorService.cs" />
     <Compile Include="Services\IMapEditorService.cs" />
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Tile.cs" />
@@ -102,17 +104,25 @@
     </Compile>
     <Compile Include="Services\SpriteLoader.cs" />
     <Compile Include="Services\MapEditorService.cs" />
+    <Compile Include="Services\WorldEditorService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\WorldEditorViewModel.cs" />
     <Compile Include="Views\TestPanel.xaml.cs">
       <DependentUpon>TestPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CharacterEditorControl.xaml.cs">
       <DependentUpon>CharacterEditorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\TileToBitmapImageConverter.cs" />
-    <Compile Include="ViewModels\CharacterEditorModel.cs" />
-    <Compile Include="ViewModels\MapEditorModel.cs" />
+    <Compile Include="Services\StringToTerrainSpriteConverter.cs" />
+    <Compile Include="ViewModels\CharacterEditorViewModel.cs" />
+    <Compile Include="ViewModels\MapEditorViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\TileView.xaml.cs">
+      <DependentUpon>TileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WorldEditorControl.xaml.cs">
+      <DependentUpon>WorldEditorControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\TestPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -138,6 +148,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MapEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WorldEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

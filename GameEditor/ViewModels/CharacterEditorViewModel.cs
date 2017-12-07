@@ -1,5 +1,5 @@
 ﻿namespace GameEditor.ViewModels
 {
-    public class CharacterEditorModel
+    public class CharacterEditorViewModel
     { }
 }

@@ -6,13 +6,25 @@ using System.Windows.Media.Imaging;
 
 namespace GameEditor.Services
 {
-    public class SpriteLoader
+    public static class SpriteLoader
     {
-        public Dictionary<string, BitmapImage> Sprites{ get; }
+        public static Dictionary<string, BitmapImage> TerrainSprites{ get; }
+        public static Dictionary<string, BitmapImage> LogicSprites{ get; }
+        public static BitmapImage ErrorSprite{ get; set; }
+        public static BitmapImage DefaultSprite{ get; set; }
 
-        public SpriteLoader(string path)
+        static SpriteLoader()
         {
-            Sprites = new Dictionary<string, BitmapImage>();
+            TerrainSprites = LoadSprites("Resources/tiles/terrain");
+            LogicSprites = LoadSprites("Resources/tiles/logic");
+            ErrorSprite = LoadSprites("Resources/tiles")[ "error.png" ];
+            DefaultSprite = TerrainSprites[ "sand_1.png" ];
+        }
+
+
+        private static Dictionary<string, BitmapImage> LoadSprites(string path)
+        {
+            var sprites = new Dictionary<string, BitmapImage>();
             try
             {
                 var dir = new DirectoryInfo(path);
@@ -23,7 +35,7 @@ namespace GameEditor.Services
                 {
                     var img = new BitmapImage(new Uri(file.FullName));
                     var fileName = file.Name;
-                    Sprites[ fileName ] = img;
+                    sprites[ fileName ] = img;
                 }
 
                 Console.WriteLine(@"Done.");
@@ -32,6 +44,8 @@ namespace GameEditor.Services
             {
                 Console.WriteLine($@"Could not load sprites: {e.Message}");
             }
+
+            return sprites;
         }
     }
 }
