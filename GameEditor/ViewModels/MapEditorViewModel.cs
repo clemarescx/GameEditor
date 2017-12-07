@@ -7,15 +7,18 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
-//using GalaSoft.MvvmLight.Command; 
-// ^^^^  using this piece of ***** instead of CommandWpf below 
-// cost me 4 hours in debugging !! 
-using GalaSoft.MvvmLight.CommandWpf; 
 using GameEditor.Models;
 using GameEditor.Properties;
 using GameEditor.Services;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+//using GalaSoft.MvvmLight.Command; 
+// ^^^^  using this piece of ***** instead of CommandWpf below 
+// cost me 4 hours in debugging !! 
+using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
+using GameEditor.Messages;
+
 
 namespace GameEditor.ViewModels
 {
@@ -26,14 +29,12 @@ namespace GameEditor.ViewModels
         public const string BrushTilePropertyName = "BrushTile";
         public const string MapPropertyName = "AreaMap";
 
-//        private static MapEditorService _mapEditorService;
         private readonly IMapEditorService _mapEditorService;
-//        private Tile _brushTile;
-        private string _brushTile;
-        private Dictionary<string, BitmapImage> _logicTiles;
 
 
         private AreaMap _areaMap;
+        private string _brushTile;
+        private Dictionary<string, BitmapImage> _logicTiles;
         private string _mapName;
 
         private Dictionary<string, BitmapImage> _terrainSprites;
@@ -50,10 +51,11 @@ namespace GameEditor.ViewModels
         }
 
         public RelayCommand BtnPrintMapCommand{ get; }
-        public RelayCommand BtnLoadMapCommand{ get; }
-        public RelayCommand BtnSaveMapCommand{ get; }
+        public RelayCommand BtnImportMapCommand{ get; }
+        public RelayCommand BtnExportMapCommand{ get; }
         public RelayCommand BtnClearMapCommand{ get; }
         public RelayCommand BtnDebugCommand{ get; }
+        public RelayCommand BtnSaveMapCommand { get; }
 
 
         public AreaMap AreaMap
@@ -61,6 +63,10 @@ namespace GameEditor.ViewModels
             get => _areaMap;
             set
             {
+                if(_areaMap == value)
+
+                    return;
+
                 _areaMap = value;
                 OnPropertyChanged();
             }
@@ -103,9 +109,10 @@ namespace GameEditor.ViewModels
 
         public MapEditorViewModel(IMapEditorService service)
         {
-//            _mapEditorService = new MapEditorService();
+            //            _mapEditorService = new MapEditorService();
             _mapEditorService = service;
-
+            Messenger.Default.Register<MapSelectedMessage>(this, msg => AreaMap = msg.SelectedMap);
+            
             service.GetTerrainTiles(
                 (sprites, error) => {
                     if(error != null)
@@ -124,16 +131,17 @@ namespace GameEditor.ViewModels
                         LogicTiles = new Dictionary<string, BitmapImage>(sprites);
                 });
 
-            //            AreaMap = new AreaMap(8, "newMap");
-            //            MapName = AreaMap.Name;
-            //            var defaultTile = new Tile();
-            //            defaultTile.SpriteName = "sand_1.png";
-            //            AreaMap.Fill(defaultTile);
             BtnPrintMapCommand = new RelayCommand(PrintMap, () => AreaMap != null);
-            BtnLoadMapCommand = new RelayCommand(LoadMap);
-            BtnSaveMapCommand = new RelayCommand(SaveMap, () => AreaMap != null);
+            BtnImportMapCommand = new RelayCommand(ImportMap);
+            BtnExportMapCommand = new RelayCommand(ExportMap, () => AreaMap != null);
             BtnClearMapCommand = new RelayCommand(ClearMap);
             BtnDebugCommand = new RelayCommand(() => AreaMap = new AreaMap(8, "CreatedfromDebug"));
+            BtnSaveMapCommand = new RelayCommand(SaveMap);
+        }
+
+        private void SaveMap()
+        {
+            Messenger.Default.Send(new SaveMapMessage(AreaMap));
         }
 
         [NotifyPropertyChangedInvocator]
@@ -159,7 +167,7 @@ namespace GameEditor.ViewModels
         }
 
         // Load from JSON
-        private void LoadMap()
+        private void ImportMap()
         {
             var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
 
@@ -170,9 +178,6 @@ namespace GameEditor.ViewModels
             {
                 var jsonZone = File.ReadAllText(openFileDialog.FileName);
                 AreaMap = JsonConvert.DeserializeObject<AreaMap>(jsonZone);
-
-                //TxtMapName.Text = AreaMap.SpriteName;
-                //DrawMap();
             }
             catch(Exception ex)
             {
@@ -182,7 +187,7 @@ namespace GameEditor.ViewModels
         }
 
         // Save to JSON
-        private void SaveMap()
+        private void ExportMap()
         {
             var jsonConvertZone = JsonConvert.SerializeObject(AreaMap);
 

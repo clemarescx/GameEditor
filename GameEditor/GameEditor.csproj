@@ -92,6 +92,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignMapEditorService.cs" />
+    <Compile Include="Messages\SaveMapMessage.cs" />
+    <Compile Include="Messages\MapSelectedMessage.cs" />
     <Compile Include="Models\WorldMap.cs" />
     <Compile Include="Services\IWorldEditorService.cs" />
     <Compile Include="Services\IMapEditorService.cs" />

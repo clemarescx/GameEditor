@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
+using GameEditor.Messages;
 using GameEditor.Models;
 using GameEditor.Properties;
 using GameEditor.Services;
@@ -18,7 +20,7 @@ namespace GameEditor.ViewModels
 {
     public class WorldEditorViewModel : ViewModelBase, INotifyPropertyChanged
     {
-//        private static WorldEditorService _worldEditorService;
+        private int mapNamingCounter = 1;
         private readonly IWorldEditorService _worldEditorService;
         private ObservableCollection<AreaMap> _areaMaps;
         private RelayCommand _btnAddMapCommand;
@@ -56,52 +58,91 @@ namespace GameEditor.ViewModels
             get => _selectedMap;
             set {
                 _selectedMap = value;
+                Messenger.Default.Send(new MapSelectedMessage(_selectedMap));
                 OnPropertyChanged();
             }
         }
 
-        public RelayCommand BtnLoadWorldCommand =>
-            _btnLoadWorldCommand ?? ( _btnLoadWorldCommand = new RelayCommand(LoadWorld) );
+        public RelayCommand BtnLoadWorldCommand
+        {
+            get { return _btnLoadWorldCommand ?? ( _btnLoadWorldCommand = new RelayCommand(LoadWorld) ); }
+        }
 
-        public RelayCommand BtnSaveWorldCommand => _btnSaveWorldCommand
-                                                   ?? ( _btnSaveWorldCommand = new RelayCommand(
-                                                            SaveWorld,
-                                                            () => WorldMap != null) );
-        public RelayCommand BtnAddMapCommand => _btnAddMapCommand
-                                                ?? ( _btnAddMapCommand = new RelayCommand(
-                                                         () => {
-                                                             var newmapname = $"newMap{AreaMaps.Count + 1}";
-                                                             Console.WriteLine(@"Creating " + newmapname);
-                                                             AreaMaps.Add(new AreaMap(8, newmapname));
-                                                         },
-                                                         () => WorldMap != null) );
+        public RelayCommand BtnSaveWorldCommand
+        {
+            get
+            {
+                return _btnSaveWorldCommand
+                       ?? ( _btnSaveWorldCommand = new RelayCommand(SaveWorld, () => WorldMap != null) );
+            }
+        }
+        public RelayCommand BtnAddMapCommand
+        {
+            get
+            {
+                return _btnAddMapCommand
+                       ?? ( _btnAddMapCommand = new RelayCommand(
+                                () => {
+                                    var newmapname = $"newMap{mapNamingCounter++}";
+                                    Console.WriteLine(@"Creating " + newmapname);
+                                    AreaMaps.Add(new AreaMap(8, newmapname));
+                                },
+                                () => WorldMap != null) );
+            }
+        }
 
-        public RelayCommand BtnWorldDebugCommand => _btnWorldDebugCommand
-                                                    ?? ( _btnWorldDebugCommand = new RelayCommand(
-                                                             () => {
-                                                                 Console.WriteLine("Change world name to 'potatoes'");
-                                                                 WorldMap.Name = "World potatoes";
-                                                             },
-                                                             () => WorldMap != null) );
+        public RelayCommand BtnWorldDebugCommand
+        {
+            get
+            {
+                return _btnWorldDebugCommand
+                       ?? ( _btnWorldDebugCommand = new RelayCommand(
+                                () => {
+                                    Console.WriteLine("Change world name to 'potatoes'");
+                                    WorldMap.Name = "World potatoes";
+                                },
+                                () => WorldMap != null) );
+            }
+        }
 
-        public RelayCommand BtnRemoveMapCommand => _btnRemoveMapCommand
-                                                   ?? ( _btnRemoveMapCommand = new RelayCommand(
-                                                            () => Console.WriteLine(@"Remove a map not implemented"),
-                                                            () => WorldMap != null) );
+        public RelayCommand BtnRemoveMapCommand
+        {
+            get
+            {
+                return _btnRemoveMapCommand
+                       ?? ( _btnRemoveMapCommand = new RelayCommand(
+                                () => AreaMaps.Remove(SelectedMap),
+                                () => WorldMap != null) );
+            }
+        }
 
-        public RelayCommand BtnCreateWorldCommand =>
-            _btnCreateWorldCommand ?? ( _btnCreateWorldCommand = new RelayCommand(CreateWorld) );
+        public RelayCommand BtnCreateWorldCommand
+        {
+            get { return _btnCreateWorldCommand ?? ( _btnCreateWorldCommand = new RelayCommand(CreateWorld) ); }
+        }
 
-        public RelayCommand BtnWorldPrintCommand => _btnPrintWorldCommand
-                                                    ?? ( _btnPrintWorldCommand = new RelayCommand(
-                                                             PrintWorld,
-                                                             () => WorldMap != null) );
+        public RelayCommand BtnWorldPrintCommand
+        {
+            get
+            {
+                return _btnPrintWorldCommand
+                       ?? ( _btnPrintWorldCommand = new RelayCommand(PrintWorld, () => WorldMap != null) );
+            }
+        }
 
         public WorldEditorViewModel(IWorldEditorService service)
         {
-//            _worldEditorService = new WorldEditorService();
             _worldEditorService = service;
             AreaMaps = new ObservableCollection<AreaMap>();
+            Messenger.Default.Register<SaveMapMessage>(this,
+                msg => {
+                    if(AreaMaps.Contains(SelectedMap))
+                    {
+                        Console.WriteLine("Removing '{0}'", SelectedMap.Name);
+                        AreaMaps.Remove(SelectedMap);
+                        AreaMaps.Add(msg.SavedMap);
+                    }
+                });
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
@@ -153,7 +194,6 @@ namespace GameEditor.ViewModels
                 Console.WriteLine($@"	{m.Name}");
         }
 
-        // Load from JSON
         private void dLoadWorld()
         {
             if(WorldMap != null)
@@ -193,7 +233,7 @@ namespace GameEditor.ViewModels
             }
         }
 
-        // test
+        // "Proof of concept" to use the Service class
         private void LoadWorld()
         {
             if(WorldMap != null)

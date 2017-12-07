@@ -127,14 +127,12 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Height="25">
-                <Button Margin="2,0"
-                        Content="Load"
-                        Width="75"
-                        Command="{Binding BtnLoadMapCommand}" />
+                
                 <Button Margin="2,0"
                         Content="Save"
                         Width="75"
                         Command="{Binding BtnSaveMapCommand}" />
+
                 <Button Margin="2,0"
                         Content="Clear"
                         Width="75"
@@ -161,6 +159,14 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Height="25">
+                <Button Margin="2,0"
+                        Content="Import..."
+                        Width="75"
+                        Command="{Binding BtnImportMapCommand}" />
+                <Button Margin="2,0"
+                        Content="Export..."
+                        Width="75"
+                        Command="{Binding BtnExportMapCommand}" />
                 <Label>Debug: </Label>
                 <Button Margin="2,0"
                         Content="Print to console"

@@ -11,6 +11,7 @@ namespace GameEditor.Services
     {
         public WorldEditorService() { }
         
+        // Load World from JSON
         public void LoadWorld(Action<WorldMap, Exception> callback)
         {
             var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
