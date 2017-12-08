@@ -6,9 +6,9 @@ namespace GameEditor.Messages
 {
     public class MapSelectedMessage : MessageBase
     {
-        public AreaMap SelectedMap{ get; }
+        public Map SelectedMap{ get; }
 
-        public MapSelectedMessage(AreaMap selectedMap)
+        public MapSelectedMessage(Map selectedMap)
         {
             SelectedMap = selectedMap;
         }

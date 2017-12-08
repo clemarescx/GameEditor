@@ -12,8 +12,8 @@
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <DockPanel>
         <TabControl Name="TabControl">
-            <TabItem Header="World Editor">
-                <local:WorldEditorControl />
+            <TabItem Header="Campaign Editor">
+                <local:CampaignEditorControl />
             </TabItem>
             <TabItem Header="Map Editor">
                 <local:MapEditorControl />

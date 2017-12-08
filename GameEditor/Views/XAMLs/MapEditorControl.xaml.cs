@@ -23,9 +23,9 @@ namespace GameEditor
 
         private void DrawMap()
         { /*
-            for(var i = 0; i < AreaMap.Rows; i++)
+            for(var i = 0; i < Map.Rows; i++)
             {
-                for(var j = 0; j < AreaMap.Columns; j++)
+                for(var j = 0; j < Map.Columns; j++)
                     UpdateTileAt(i, j);
             }*/
         }
@@ -33,9 +33,9 @@ namespace GameEditor
         private void UpdateTileAt(int row, int column)
         { /*
             var terrainImg = new Image();
-            var tilevalue = AreaMap.Grid[ row, column ];
-            var tilename = AreaMap.TerrainSpriteNameTable[ tilevalue ];
-            var tilename = AreaMap.Grid[ row, column ].SpriteName;
+            var tilevalue = Map.Grid[ row, column ];
+            var tilename = Map.TerrainSpriteNameTable[ tilevalue ];
+            var tilename = Map.Grid[ row, column ].SpriteName;
             terrainImg.Source = _mapEditorService.GetTerrainSprite(tilename);
             terrainImg.PreviewMouseDown += TerrainMapGrid_OnMouseDown;
             AddToGrid(TerrainMapGrid, row, column, terrainImg);
@@ -66,17 +66,17 @@ namespace GameEditor
                 Console.WriteLine($@"Grid clicked in cell {row},{col}");
                 var paintbrushTileName = BrushTile.SpriteName;
 
-                if(!AreaMap.TerrainSpriteNameTable.Contains(paintbrushTileName))
+                if(!Map.TerrainSpriteNameTable.Contains(paintbrushTileName))
                 {
                     if the sprite has not been used for this
 
                     map before, add it to the index table
-                    Console.WriteLine($@"{paintbrushTileName} added to AreaMap's tile index");
-                    AreaMap.TerrainSpriteNameTable.Add(paintbrushTileName);
+                    Console.WriteLine($@"{paintbrushTileName} added to Map's tile index");
+                    Map.TerrainSpriteNameTable.Add(paintbrushTileName);
                 }
 
                 update both the model and the view
-                AreaMap.Grid[ row, col ] = AreaMap.TerrainSpriteNameTable.IndexOf(paintbrushTileName);
+                Map.Grid[ row, col ] = Map.TerrainSpriteNameTable.IndexOf(paintbrushTileName);
                 image.Source = BrushTile.TileImage;
             }*/
         }

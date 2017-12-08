@@ -7,15 +7,15 @@ namespace GameEditor.Services
 {
 
     /// <summary>
-    /// unpack an AreaMap's name from within XAML view file.
+    /// unpack a Map's name from within XAML view file.
     /// ...Perhaps unnecessary.
     /// </summary>
-    [ValueConversion(typeof(AreaMap), typeof(string))]
+    [ValueConversion(typeof(Map), typeof(string))]
     public class MapToMapnameStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var map = (AreaMap)value;
+            var map = (Map)value;
             var mapName = value != null ? map.Name : "*";
             return mapName;
         }

@@ -1,30 +1,28 @@
 using System;
 using System.IO;
 using System.Windows;
-using GalaSoft.MvvmLight.Messaging;
-using GameEditor.Messages;
 using GameEditor.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace GameEditor.Services
 {
-    internal class WorldEditorService : IWorldEditorService
+    internal class CampaignEditorService : ICampaignEditorService
     {
         // Load World from JSON
-        public void LoadWorld(Action<WorldMap, Exception> callback)
+        public void LoadCampaign(Action<Campaign, Exception> callback)
         {
             var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
 
             if(openFileDialog.ShowDialog() != true)
                 return;
 
-            WorldMap worldMap = null;
+            Campaign campaign = null;
             Exception error = null;
             try
             {
-                var worldJson = File.ReadAllText(openFileDialog.FileName);
-                worldMap = JsonConvert.DeserializeObject<WorldMap>(worldJson);
+                var campaignJson = File.ReadAllText(openFileDialog.FileName);
+                campaign = JsonConvert.DeserializeObject<Campaign>(campaignJson);
             }
             catch(Exception ex)
             {
@@ -32,15 +30,15 @@ namespace GameEditor.Services
                 error = ex;
             }
 
-            callback(worldMap, error);
+            callback(campaign, error);
         }
 
         // Save to JSON
-        public void SaveWorld(WorldMap worldMap)
+        public void SaveCampaign(Campaign campaign)
         {
-            var jsonConvertZone = JsonConvert.SerializeObject(worldMap);
+            var campaignJson = JsonConvert.SerializeObject(campaign);
 
-            var filename = string.Empty.Equals(worldMap.Name) || null == worldMap.Name ? "newWorld" : worldMap.Name;
+            var filename = string.Empty.Equals(campaign.Name) || null == campaign.Name ? "new_Campaign" : campaign.Name;
             filename += ".json";
 
             var saveFileDialog = new SaveFileDialog{
@@ -48,13 +46,13 @@ namespace GameEditor.Services
                 InitialDirectory = Directory.GetCurrentDirectory(),
                 Filter = "JSON file (*.json)|*.json"
             };
-            worldMap.Name = saveFileDialog.SafeFileName;
+            campaign.Name = saveFileDialog.SafeFileName;
 
             if(saveFileDialog.ShowDialog() == true)
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
+                    File.WriteAllText(saveFileDialog.FileName, campaignJson);
                     Console.WriteLine("Saved!");
                 }
                 catch(Exception ex)

@@ -3,11 +3,11 @@
 namespace GameEditor
 {
     /// <summary>
-    ///     Interaction logic for WorldEditorControl.xaml
+    ///     Interaction logic for CampaignEditorControl.xaml
     /// </summary>
-    public partial class WorldEditorControl : UserControl
+    public partial class CampaignEditorControl : UserControl
     {
-        public WorldEditorControl()
+        public CampaignEditorControl()
         {
             InitializeComponent();
         }

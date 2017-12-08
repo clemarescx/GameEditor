@@ -3,16 +3,17 @@ using Newtonsoft.Json;
 
 namespace GameEditor.Models
 {
-    public class WorldMap
+    public class Campaign
     {
         public string Name{ get; set; }
-        public List<AreaMap> Areas{ get; set; }
+        public List<Map> Maps{ get; set; }
+        public List<Character> Characters { get; set; }
 
         [JsonConstructor]
-        public WorldMap(string name)
+        public Campaign(string name)
         {
             Name = name;
-            Areas = new List<AreaMap>();
+            Maps = new List<Map>();
         }
     }
 }

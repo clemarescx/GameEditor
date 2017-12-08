@@ -24,7 +24,7 @@ namespace GameEditor
         public ViewModels.ViewModelLocator.MainViewModel Main =>
             ServiceLocator.Current.GetInstance<ViewModels.ViewModelLocator.MainViewModel>();
         public MapEditorViewModel MapEditor => ServiceLocator.Current.GetInstance<MapEditorViewModel>();
-        public WorldEditorViewModel WorldEditor => ServiceLocator.Current.GetInstance<WorldEditorViewModel>();
+        public CampaignEditorViewModel CampaignEditor => ServiceLocator.Current.GetInstance<CampaignEditorViewModel>();
         public TileViewModel TileView => ServiceLocator.Current.GetInstance<TileViewModel>();
 
         /// <summary>
@@ -44,11 +44,11 @@ namespace GameEditor
             {
                 // Create run time view services and models
                 SimpleIoc.Default.Register<IMapEditorService, MapEditorService>();
-                SimpleIoc.Default.Register<IWorldEditorService, WorldEditorService>();
+                SimpleIoc.Default.Register<ICampaignEditorService, CampaignEditorService>();
             }
 
             SimpleIoc.Default.Register<MapEditorViewModel>();
-            SimpleIoc.Default.Register<WorldEditorViewModel>();
+            SimpleIoc.Default.Register<CampaignEditorViewModel>();
             SimpleIoc.Default.Register<TileViewModel>();
         }
 

@@ -4,11 +4,11 @@ using GameEditor.Models;
 
 namespace GameEditor.Messages
 {
-    public class AreamapsAvailableMessage : MessageBase
+    public class AvailableMapsMessage : MessageBase
     {
-        public List<AreaMap> AllMaps{ get; }
+        public List<Map> AllMaps{ get; }
 
-        public AreamapsAvailableMessage(List<AreaMap> maps)
+        public AvailableMapsMessage(List<Map> maps)
         {
             AllMaps = maps;
         }

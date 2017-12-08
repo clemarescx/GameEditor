@@ -10,12 +10,12 @@ namespace GameEditor.Design
     /// </summary>
     public class DesignMapEditorService : IMapEditorService
     {
-        public void LoadAreaMap(Action<AreaMap, Exception> callback)
+        public void LoadMap(Action<Map, Exception> callback)
         {
             throw new NotImplementedException();
         }
 
-        public void SaveAreaMap(AreaMap map)
+        public void SaveMap(Map map)
         {
             throw new NotImplementedException();
         }

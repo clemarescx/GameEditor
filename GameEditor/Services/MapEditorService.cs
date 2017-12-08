@@ -1,39 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using GameEditor.Models;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace GameEditor.Services
 {
-    /// <summary>
-    ///     Loads the tile graphics per category (folder) and stores them in distinct
-    ///     collections as Tile objects.
-    /// </summary>
     public class MapEditorService : IMapEditorService
     {
         /// <summary>
-        /// Parse an AreaMap from JSON.
-        /// Returns loaded map via callback.
+        ///     Parse Map from JSON.
+        ///     Returns loaded Map via callback.
         /// </summary>
         /// <param name="callback"></param>
-        public void LoadAreaMap(Action<AreaMap, Exception> callback)
+        public void LoadMap(Action<Map, Exception> callback)
         {
             var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
 
             if(openFileDialog.ShowDialog() != true)
                 return;
 
-            AreaMap map = null;
+            Map map = null;
             Exception error = null;
             try
             {
                 var mapJson = File.ReadAllText(openFileDialog.FileName);
-                map = JsonConvert.DeserializeObject<AreaMap>(mapJson);
+                map = JsonConvert.DeserializeObject<Map>(mapJson);
             }
             catch(Exception ex)
             {
@@ -44,12 +37,12 @@ namespace GameEditor.Services
         }
 
         /// <summary>
-        ///     Serialise an AreaMap to JSON
+        ///     Serialise Map to JSON
         /// </summary>
         /// <param name="map"></param>
-        public void SaveAreaMap(AreaMap map)
+        public void SaveMap(Map map)
         {
-            var jsonConvertZone = JsonConvert.SerializeObject(map);
+            var mapJson = JsonConvert.SerializeObject(map);
 
             var filename = string.Empty.Equals(map.Name) || null == map.Name ? "newMap" : map.Name;
             filename += ".json";
@@ -65,7 +58,7 @@ namespace GameEditor.Services
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
+                    File.WriteAllText(saveFileDialog.FileName, mapJson);
                 }
                 catch(Exception ex)
                 {

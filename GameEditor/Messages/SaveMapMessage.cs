@@ -9,12 +9,12 @@ namespace GameEditor.Messages
         /// Container for transferring areamap data through MvvmLight messenging
         /// </summary>
         /// <param name="savedMap"></param>
-        public SaveMapMessage(AreaMap savedMap)
+        public SaveMapMessage(Map savedMap)
         {
             SavedMap = savedMap;
 
         }
 
-        public AreaMap SavedMap{ get; set; }
+        public Map SavedMap{ get; set; }
     }
 }

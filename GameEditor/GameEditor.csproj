@@ -92,13 +92,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignMapEditorService.cs" />
-    <Compile Include="Messages\AreamapsAvailableMessage.cs" />
+    <Compile Include="Messages\AvailableMapsMessage.cs" />
     <Compile Include="Messages\SaveMapMessage.cs" />
     <Compile Include="Messages\MapSelectedMessage.cs" />
-    <Compile Include="Models\WorldMap.cs" />
-    <Compile Include="Services\IWorldEditorService.cs" />
+    <Compile Include="Models\Campaign.cs" />
+    <Compile Include="Services\ICampaignEditorService.cs" />
     <Compile Include="Services\IMapEditorService.cs" />
-    <Compile Include="Models\AreaMap.cs" />
+    <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Tile.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -108,10 +108,10 @@
     <Compile Include="Services\SpriteLoader.cs" />
     <Compile Include="Services\MapEditorService.cs" />
     <Compile Include="Services\MapToMapnameStringConverter.cs" />
-    <Compile Include="Services\WorldEditorService.cs" />
+    <Compile Include="Services\CampaignEditorService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />
-    <Compile Include="ViewModels\WorldEditorViewModel.cs" />
+    <Compile Include="ViewModels\CampaignEditorViewModel.cs" />
     <Compile Include="Views\XAMLs\TestPanel.xaml.cs">
       <DependentUpon>TestPanel.xaml</DependentUpon>
     </Compile>
@@ -124,8 +124,8 @@
     <Compile Include="Views\XAMLs\TileView.xaml.cs">
       <DependentUpon>TileView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\XAMLs\WorldEditorControl.xaml.cs">
-      <DependentUpon>WorldEditorControl.xaml</DependentUpon>
+    <Compile Include="Views\XAMLs\CampaignEditorControl.xaml.cs">
+      <DependentUpon>CampaignEditorControl.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\XAMLs\TestPanel.xaml">
       <SubType>Designer</SubType>
@@ -159,7 +159,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\XAMLs\WorldEditorControl.xaml">
+    <Page Include="Views\XAMLs\CampaignEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

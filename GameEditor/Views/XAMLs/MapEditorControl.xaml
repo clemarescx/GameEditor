@@ -52,7 +52,7 @@
                                Target="{Binding ElementName=TxtMapName}" />
                         <TextBox Name="TxtMapName"
                                  TextWrapping="Wrap"
-                                 Text="{Binding AreaMap.Name, Mode=TwoWay}" />
+                                 Text="{Binding Map.Name, Mode=TwoWay}" />
                     </DockPanel>
 
                     <WrapPanel Margin="0,5">

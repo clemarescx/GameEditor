@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 namespace GameEditor.Services
 {
     /// <summary>
-    /// Singleton to access sprite resources through the whole program
+    ///     Singleton to access sprite resources through the whole program
     /// </summary>
     public static class SpriteLoader
     {
@@ -24,7 +24,7 @@ namespace GameEditor.Services
             DefaultSprite = TerrainSprites[ "sand_1.png" ];
         }
 
-        
+
         private static Dictionary<string, BitmapImage> LoadSprites(string path)
         {
             var sprites = new Dictionary<string, BitmapImage>();

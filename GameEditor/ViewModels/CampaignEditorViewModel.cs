@@ -15,55 +15,55 @@ using GameEditor.Services;
 
 namespace GameEditor.ViewModels
 {
-    public class WorldEditorViewModel : ViewModelBase, INotifyPropertyChanged
+    public class CampaignEditorViewModel : ViewModelBase, INotifyPropertyChanged
     {
         // This is for the MVVMlight framework, not really necessary as we don't use the
         // "design" implementation 
-        private readonly IWorldEditorService _worldEditorService;
+        private readonly ICampaignEditorService _campaignEditorService;
 
-        private ObservableCollection<AreaMap> _areaMaps;
+        private ObservableCollection<Map> _campaignMaps;
         private RelayCommand _btnAddMapCommand;
-        private RelayCommand _btnCreateWorldCommand;
-        private RelayCommand _btnLoadWorldCommand;
-        private RelayCommand _btnPrintWorldCommand;
+        private RelayCommand _btnCreateCampaignCommand;
+        private RelayCommand _btnLoadCampaignCommand;
+        private RelayCommand _btnPrintCampaignCommand;
         private RelayCommand _btnRemoveMapCommand;
-        private RelayCommand _btnSaveWorldCommand;
+        private RelayCommand _btnSaveCampaignCommand;
 
         private int _mapNamingCounter = 1;
-        private AreaMap _selectedMap;
-        private WorldMap _worldMap;
+        private Map _selectedMap;
+        private Campaign _currentCampaign;
 
         ///////
         // All member data with OnPropertyChanged()
         // are tracked for updates by the view
-        public ObservableCollection<AreaMap> AreaMaps
+        public ObservableCollection<Map> CampaignMaps
         {
-            get => _areaMaps;
+            get => _campaignMaps;
             set
             {
-                _areaMaps = value;
+                _campaignMaps = value;
                 OnPropertyChanged();
-                Messenger.Default.Send(new AreamapsAvailableMessage(new List<AreaMap>(_areaMaps)));
+                Messenger.Default.Send(new AvailableMapsMessage(new List<Map>(_campaignMaps)));
             }
         }
         /// <summary>
         ///     A copy of the loaded model.
         /// </summary>
-        public WorldMap WorldMap
+        public Campaign CurrentCampaign
         {
-            get => _worldMap;
+            get => _currentCampaign;
             set
             {
-                _worldMap = value;
+                _currentCampaign = value;
                 OnPropertyChanged();
             }
         }
 
         /// <summary>
         ///     The map currently selected in the listbox.
-        ///     Sent to the Map Editor as soon as it is selected
+        ///     Sent to the MapEditor as soon as it is selected
         /// </summary>
-        public AreaMap SelectedMap
+        public Map SelectedMap
         {
             get => _selectedMap;
             set
@@ -75,25 +75,25 @@ namespace GameEditor.ViewModels
         }
 
         /// <summary>
-        ///     Load the worldmap model
+        ///     Load the campaign model
         /// </summary>
-        public RelayCommand BtnLoadWorldCommand =>
-            _btnLoadWorldCommand ?? ( _btnLoadWorldCommand = new RelayCommand(LoadWorld) );
+        public RelayCommand BtnLoadCampaignCommand =>
+            _btnLoadCampaignCommand ?? ( _btnLoadCampaignCommand = new RelayCommand(LoadCampaign) );
 
         /// <summary>
-        ///     Save the current worldmap
+        ///     Save the current campaign
         /// </summary>
-        public RelayCommand BtnSaveWorldCommand
+        public RelayCommand BtnSaveCampaignCommand
         {
             get
             {
-                return _btnSaveWorldCommand
-                       ?? ( _btnSaveWorldCommand = new RelayCommand(SaveWorld, () => WorldMap != null) );
+                return _btnSaveCampaignCommand
+                       ?? ( _btnSaveCampaignCommand = new RelayCommand(SaveCampaign, () => CurrentCampaign != null) );
             }
         }
 
         /// <summary>
-        ///     Add an area map to the world
+        ///     Add a Map to the currentCampaign
         /// </summary>
         public RelayCommand BtnAddMapCommand
         {
@@ -103,14 +103,14 @@ namespace GameEditor.ViewModels
                        ?? ( _btnAddMapCommand = new RelayCommand(
                                 () => {
                                     var newmapname = $"newMap{_mapNamingCounter++}";
-                                    AreaMaps.Add(new AreaMap(newmapname));
+                                    CampaignMaps.Add(new Map(newmapname));
                                 },
-                                () => WorldMap != null) );
+                                () => CurrentCampaign != null) );
             }
         }
 
         /// <summary>
-        ///     Remove an area map from the world
+        ///     Remove a Map from the currentCampaign
         /// </summary>
         public RelayCommand BtnRemoveMapCommand
         {
@@ -118,69 +118,69 @@ namespace GameEditor.ViewModels
             {
                 return _btnRemoveMapCommand
                        ?? ( _btnRemoveMapCommand = new RelayCommand(
-                                () => AreaMaps.Remove(SelectedMap),
-                                () => WorldMap != null) );
+                                () => CampaignMaps.Remove(SelectedMap),
+                                () => CurrentCampaign != null) );
             }
         }
 
         /// <summary>
-        ///     Create a new world map with one area map by default
+        ///     Create a new Campaign with one starting Map by default
         /// </summary>
-        public RelayCommand BtnCreateWorldCommand =>
-            _btnCreateWorldCommand ?? ( _btnCreateWorldCommand = new RelayCommand(CreateWorld) );
+        public RelayCommand BtnCreateCampaignCommand =>
+            _btnCreateCampaignCommand ?? ( _btnCreateCampaignCommand = new RelayCommand(CreateCampaign) );
 
         /// <summary>
-        ///     Command to print the content of the loaded WorldMap
+        ///     Command to print the content of the loaded currentCampaign
         /// </summary>
-        public RelayCommand BtnWorldPrintCommand
+        public RelayCommand BtnPrintCampaignCommand
         {
             get
             {
-                return _btnPrintWorldCommand
-                       ?? ( _btnPrintWorldCommand = new RelayCommand(PrintWorld, () => WorldMap != null) );
+                return _btnPrintCampaignCommand
+                       ?? ( _btnPrintCampaignCommand = new RelayCommand(PrintCampaign, () => CurrentCampaign != null) );
             }
         }
 
         /// <summary>
-        ///     ViewModel for the WorldEditor view. Contains commands and functionality
+        ///     ViewModel for the CampaignEditor view. Contains commands and functionality
         ///     that would otherwise be in the code-behind.
         ///     The constructor registers to messages fired by other viewModels.
         /// </summary>
         /// <param name="service"></param>
-        public WorldEditorViewModel(IWorldEditorService service)
+        public CampaignEditorViewModel(ICampaignEditorService service)
         {
-            _worldEditorService = service;
-            AreaMaps = new ObservableCollection<AreaMap>();
+            _campaignEditorService = service;
+            CampaignMaps = new ObservableCollection<Map>();
 
             // inter-viewModel messaging system 
             // with MVVMlight ;)
-            // Update the selected areamap with the one opened in MapEditor
+            // Update the selected Map with the one opened in MapEditor
             Messenger.Default.Register<SaveMapMessage>(
                 this,
                 msg => {
-                    if(AreaMaps.Contains(SelectedMap))
+                    if(CampaignMaps.Contains(SelectedMap))
                     {
                         Console.WriteLine("Removing '{0}'", SelectedMap.Name);
-                        AreaMaps.Remove(SelectedMap);
-                        AreaMaps.Add(msg.SavedMap);
+                        CampaignMaps.Remove(SelectedMap);
+                        CampaignMaps.Add(msg.SavedMap);
                         SelectedMap = msg.SavedMap;
                     }
                 });
         }
 
-        private void CreateWorld()
+        private void CreateCampaign()
         {
-            if(WorldMap != null)
+            if(CurrentCampaign != null)
             {
                 var res = MessageBox.Show(
-                    "Would you like to save the current world?",
-                    "Load world",
+                    "Would you like to save the current campaign?",
+                    "Load campaign",
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Warning);
                 switch(res)
                 {
                     case MessageBoxResult.Yes:
-                        SaveWorld();
+                        SaveCampaign();
                         break;
                     case MessageBoxResult.No:
                         break;
@@ -189,44 +189,44 @@ namespace GameEditor.ViewModels
                 }
             }
 
-            WorldMap = new WorldMap("newWorld");
-            AreaMaps.Clear();
-            AreaMaps.Add(new AreaMap("Start_Area"));
-            PrintWorld();
+            CurrentCampaign = new Campaign("newCampaign");
+            CampaignMaps.Clear();
+            CampaignMaps.Add(new Map("Start_Area"));
+            PrintCampaign();
         }
 
         /// <summary>
-        ///     A debug function to make sure the ObservableCollection AreaMaps
-        ///     and the WorldMap DTO's area maps are synchronised when it matters
-        ///     (e.g: when saving the world map)
+        ///     A debug function to make sure the ObservableCollection CampaignMaps
+        ///     and the CurrentCampaign's Maps are synchronised when it matters
+        ///     (e.g: when saving the currentCampaign)
         /// </summary>
-        private void PrintWorld()
+        private void PrintCampaign()
         {
-            Console.WriteLine($@"Content of world '{WorldMap.Name}':");
-            foreach(var m in WorldMap.Areas)
+            Console.WriteLine($@"Content of currentCampaign '{CurrentCampaign.Name}':");
+            foreach(var m in CurrentCampaign.Maps)
                 Console.WriteLine($@"	{m.Name}");
 
-            Console.WriteLine($@"Content of AreaMaps:");
-            foreach(var m in AreaMaps)
+            Console.WriteLine($@"Content of CampaignMaps:");
+            foreach(var m in CampaignMaps)
                 Console.WriteLine($@"	{m.Name}");
         }
 
         /// <summary>
-        ///     Load the world by callback from associated service.
+        ///     Load the currentCampaign by callback from associated service.
         /// </summary>
-        private void LoadWorld()
+        private void LoadCampaign()
         {
-            if(WorldMap != null)
+            if(CurrentCampaign != null)
             {
                 var res = MessageBox.Show(
-                    "Would you like to save the current world?",
-                    "Load world",
+                    "Would you like to save the current campaign?",
+                    "Load campaign",
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Warning);
                 switch(res)
                 {
                     case MessageBoxResult.Yes:
-                        SaveWorld();
+                        SaveCampaign();
                         break;
                     case MessageBoxResult.No:
                         break;
@@ -235,18 +235,18 @@ namespace GameEditor.ViewModels
                 }
             }
 
-            _worldEditorService.LoadWorld(
-                (world, error) => {
+            _campaignEditorService.LoadCampaign(
+                (campaign, error) => {
                     if(error != null)
-                        MessageBox.Show("Could not load world from service: " + error.Message);
+                        MessageBox.Show("Could not load Campaign from service: " + error.Message);
                     else
                     {
-                        if(world != null)
+                        if(campaign != null)
                         {
                             Console.WriteLine("Loaded!");
-                            WorldMap = world;
-                            AreaMaps = new ObservableCollection<AreaMap>(WorldMap.Areas);
-                            PrintWorld();
+                            CurrentCampaign = campaign;
+                            CampaignMaps = new ObservableCollection<Map>(CurrentCampaign.Maps);
+                            PrintCampaign();
                         }
                     }
                 });
@@ -255,11 +255,11 @@ namespace GameEditor.ViewModels
         /// <summary>
         ///     WE'RE GONNA SAVE THE *burrp* WORLD MORTY
         /// </summary>
-        private void SaveWorld()
+        private void SaveCampaign()
         {
-            WorldMap.Areas = AreaMaps.ToList();
-            _worldEditorService.SaveWorld(WorldMap);
-            PrintWorld();
+            CurrentCampaign.Maps = CampaignMaps.ToList();
+            _campaignEditorService.SaveCampaign(CurrentCampaign);
+            PrintCampaign();
         }
 
         /// <summary>
