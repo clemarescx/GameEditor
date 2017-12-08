@@ -93,7 +93,6 @@
     </ApplicationDefinition>
     <Compile Include="Design\DesignMapEditorService.cs" />
     <Compile Include="Messages\AreamapsAvailableMessage.cs" />
-    <Compile Include="Messages\SaveWorldMessage.cs" />
     <Compile Include="Messages\SaveMapMessage.cs" />
     <Compile Include="Messages\MapSelectedMessage.cs" />
     <Compile Include="Models\WorldMap.cs" />
@@ -113,23 +112,22 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />
     <Compile Include="ViewModels\WorldEditorViewModel.cs" />
-    <Compile Include="Views\TestPanel.xaml.cs">
+    <Compile Include="Views\XAMLs\TestPanel.xaml.cs">
       <DependentUpon>TestPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CharacterEditorControl.xaml.cs">
+    <Compile Include="Views\XAMLs\CharacterEditorControl.xaml.cs">
       <DependentUpon>CharacterEditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\StringToTerrainSpriteConverter.cs" />
-    <Compile Include="ViewModels\CharacterEditorViewModel.cs" />
     <Compile Include="ViewModels\MapEditorViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="Views\TileView.xaml.cs">
+    <Compile Include="Views\ViewModelLocator.cs" />
+    <Compile Include="Views\XAMLs\TileView.xaml.cs">
       <DependentUpon>TileView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WorldEditorControl.xaml.cs">
+    <Compile Include="Views\XAMLs\WorldEditorControl.xaml.cs">
       <DependentUpon>WorldEditorControl.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\TestPanel.xaml">
+    <Page Include="Views\XAMLs\TestPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -142,26 +140,26 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\Character.cs" />
-    <Compile Include="Views\MapEditorControl.xaml.cs">
+    <Compile Include="Views\XAMLs\MapEditorControl.xaml.cs">
       <DependentUpon>MapEditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\CharacterEditorControl.xaml">
+    <Page Include="Views\XAMLs\CharacterEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MapEditorControl.xaml">
+    <Page Include="Views\XAMLs\MapEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TileView.xaml">
+    <Page Include="Views\XAMLs\TileView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WorldEditorControl.xaml">
+    <Page Include="Views\XAMLs\WorldEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

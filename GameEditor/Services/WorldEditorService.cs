@@ -11,11 +11,6 @@ namespace GameEditor.Services
 {
     internal class WorldEditorService : IWorldEditorService
     {
-        public WorldEditorService() { Messenger.Default.Register<SaveWorldMessage>(this,
-            msg => {
-                SaveWorld(msg.SavedWorldMap);
-            });}
-        
         // Load World from JSON
         public void LoadWorld(Action<WorldMap, Exception> callback)
         {
@@ -25,21 +20,22 @@ namespace GameEditor.Services
                 return;
 
             WorldMap worldMap = null;
-            Exception e = null;
+            Exception error = null;
             try
             {
-                var jsonZone = File.ReadAllText(openFileDialog.FileName);
-                worldMap = JsonConvert.DeserializeObject<WorldMap>(jsonZone);
+                var worldJson = File.ReadAllText(openFileDialog.FileName);
+                worldMap = JsonConvert.DeserializeObject<WorldMap>(worldJson);
             }
             catch(Exception ex)
             {
                 MessageBox.Show("Error: \n" + ex.Message);
-                e = ex;
+                error = ex;
             }
 
-            callback(worldMap, e);
+            callback(worldMap, error);
         }
 
+        // Save to JSON
         public void SaveWorld(WorldMap worldMap)
         {
             var jsonConvertZone = JsonConvert.SerializeObject(worldMap);
@@ -47,27 +43,25 @@ namespace GameEditor.Services
             var filename = string.Empty.Equals(worldMap.Name) || null == worldMap.Name ? "newWorld" : worldMap.Name;
             filename += ".json";
 
-            var saveFileDialog = new SaveFileDialog
-            {
+            var saveFileDialog = new SaveFileDialog{
                 FileName = filename,
                 InitialDirectory = Directory.GetCurrentDirectory(),
                 Filter = "JSON file (*.json)|*.json"
             };
             worldMap.Name = saveFileDialog.SafeFileName;
 
-            if (saveFileDialog.ShowDialog() == true)
+            if(saveFileDialog.ShowDialog() == true)
             {
                 try
                 {
                     File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
                     Console.WriteLine("Saved!");
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     MessageBox.Show("Error: \n" + ex.Message);
                 }
             }
-
         }
     }
 }

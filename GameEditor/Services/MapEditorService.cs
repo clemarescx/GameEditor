@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using GameEditor.Models;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace GameEditor.Services
 {
@@ -11,37 +16,62 @@ namespace GameEditor.Services
     /// </summary>
     public class MapEditorService : IMapEditorService
     {
-        private readonly Dictionary<string, BitmapImage> LogicTiles;
-        private readonly Dictionary<string, BitmapImage> TerrainTiles;
+        /// <summary>
+        /// Parse an AreaMap from JSON.
+        /// Returns loaded map via callback.
+        /// </summary>
+        /// <param name="callback"></param>
+        public void LoadAreaMap(Action<AreaMap, Exception> callback)
+        {
+            var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
 
+            if(openFileDialog.ShowDialog() != true)
+                return;
+
+            AreaMap map = null;
+            Exception error = null;
+            try
+            {
+                var mapJson = File.ReadAllText(openFileDialog.FileName);
+                map = JsonConvert.DeserializeObject<AreaMap>(mapJson);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error: \n" + ex.Message);
+                error = ex;
+            }
+            callback(map, error);
+        }
 
         /// <summary>
-        ///     Acts as a flyweight for tile sprites.
+        ///     Serialise an AreaMap to JSON
         /// </summary>
-        public MapEditorService()
+        /// <param name="map"></param>
+        public void SaveAreaMap(AreaMap map)
         {
-            TerrainTiles = SpriteLoader.TerrainSprites;
-            LogicTiles = SpriteLoader.LogicSprites;
-        }
+            var jsonConvertZone = JsonConvert.SerializeObject(map);
 
-        public ImageSource GetTerrainSprite(string tilename)
-        {
-            return TerrainTiles[ tilename ];
-        }
+            var filename = string.Empty.Equals(map.Name) || null == map.Name ? "newMap" : map.Name;
+            filename += ".json";
 
-        public void GetDefaultTerrainSpriteName(Action<string, Exception> callback)
-        {
-            callback("sand_1.png", null);
-        }
+            var saveFileDialog = new SaveFileDialog{
+                FileName = filename,
+                InitialDirectory = Directory.GetCurrentDirectory(),
+                Filter = "JSON file (*.json)|*.json"
+            };
+            map.Name = saveFileDialog.SafeFileName;
 
-        public void GetTerrainTiles(Action<Dictionary<string, BitmapImage>, Exception> callback)
-        {
-            callback(TerrainTiles, null);
-        }
-
-        public void GetLogicTiles(Action<Dictionary<string, BitmapImage>, Exception> callback)
-        {
-            callback(LogicTiles, null);
+            if(saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Error: \n" + ex.Message);
+                }
+            }
         }
     }
 }

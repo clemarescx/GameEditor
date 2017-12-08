@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
@@ -13,8 +11,6 @@ using GameEditor.Messages;
 using GameEditor.Models;
 using GameEditor.Properties;
 using GameEditor.Services;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 
 //using GalaSoft.MvvmLight.Command; 
 // ^^^^  using this piece of ***** instead of CommandWpf 
@@ -31,14 +27,13 @@ namespace GameEditor.ViewModels
         private AreaMap _areaMap;
         private string _brushTile;
         private List<ObservableCollection<Tile>> _flattenedAreaMap = new List<ObservableCollection<Tile>>();
-        private Dictionary<string, BitmapImage> _logicTiles;
-        private string _mapName;
         private ObservableCollection<AreaMap> _otherAreaMaps;
         private Tile _selectedTile;
 
-        private Dictionary<string, BitmapImage> _terrainSprites;
         public ObservableCollection<string> TerrainSpriteNames{ get; set; }
 
+        //////
+        /// Commands, initialised in the constructor
         public RelayCommand BtnPrintMapCommand{ get; }
         public RelayCommand BtnImportMapCommand{ get; }
         public RelayCommand BtnExportMapCommand{ get; }
@@ -61,6 +56,9 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Bound to the editor grid
+        /// </summary>
         public List<ObservableCollection<Tile>> FlattenedAreaMap
         {
             get => _flattenedAreaMap;
@@ -70,7 +68,9 @@ namespace GameEditor.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        ///     The name of the sprite selected in the sprite selector
+        /// </summary>
         public string BrushTile
         {
             get => _brushTile;
@@ -81,29 +81,9 @@ namespace GameEditor.ViewModels
             }
         }
 
-        public Dictionary<string, BitmapImage> TerrainTiles
-        {
-            get => _terrainSprites;
-            set
-            {
-                if(_terrainSprites == value) return;
-
-                _terrainSprites = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Dictionary<string, BitmapImage> LogicTiles
-        {
-            get => _logicTiles;
-            set
-            {
-                if(_logicTiles == value) return;
-
-                _logicTiles = value;
-                OnPropertyChanged();
-            }
-        }
+        /// <summary>
+        ///     TODO: updates with the tile selected in the editor grid
+        /// </summary>
         public Tile SelectedTile
         {
             get => _selectedTile;
@@ -113,6 +93,10 @@ namespace GameEditor.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>
+        ///     Bound to "Portal cell" dropdown in "Tile properties" box
+        /// </summary>
         public ObservableCollection<AreaMap> OtherAreaMaps
         {
             get => _otherAreaMaps;
@@ -124,10 +108,19 @@ namespace GameEditor.ViewModels
             }
         }
 
-
+        /// <summary>
+        ///     ViewModel for the MapEditor view. Contains commands and functionality
+        ///     that would otherwise be in the code-behind.
+        ///     The constructor registers to messages fired by other viewModels, as well
+        ///     initialise the commands.
+        /// </summary>
+        /// <param name="service"></param>
         public MapEditorViewModel(IMapEditorService service)
         {
             _mapEditorService = service;
+
+            // When selecting a map in the WorldEditor view, it is sent to this view
+            // as the working AreaMap.
             Messenger.Default.Register<MapSelectedMessage>(
                 this,
                 msg => {
@@ -135,29 +128,13 @@ namespace GameEditor.ViewModels
                     if(AreaMap != null)
                         AreamapToBindableGrid();
                 });
+
             Messenger.Default.Register<AreamapsAvailableMessage>(
                 this,
-                msg => {
-                    OtherAreaMaps = new ObservableCollection<AreaMap>(msg.AllMaps);
-                });
+                msg => { OtherAreaMaps = new ObservableCollection<AreaMap>(msg.AllMaps); });
 
-            service.GetTerrainTiles(
-                (sprites, error) => {
-                    if(error != null)
-                        MessageBox.Show(error.Message);
-                    else
-                    {
-                        TerrainTiles = new Dictionary<string, BitmapImage>(sprites);
-                        TerrainSpriteNames = new ObservableCollection<string>(TerrainTiles.Keys);
-                    }
-                });
-            service.GetLogicTiles(
-                (sprites, error) => {
-                    if(error != null)
-                        MessageBox.Show(error.Message);
-                    else
-                        LogicTiles = new Dictionary<string, BitmapImage>(sprites);
-                });
+            // For the list of sprites used in the sprite selector
+            TerrainSpriteNames = new ObservableCollection<string>(SpriteLoader.TerrainSprites.Keys);
 
             BtnPrintMapCommand = new RelayCommand(PrintMap, () => AreaMap != null);
             BtnImportMapCommand = new RelayCommand(ImportMap);
@@ -167,6 +144,12 @@ namespace GameEditor.ViewModels
             BtnSaveMapCommand = new RelayCommand(SaveMap);
         }
 
+        /// <summary>
+        ///     Transform the Tile[,] to be bindable.
+        ///     The idea to bind the data to a list of horizontal StackPanels
+        ///     was taken from:
+        ///     http://www.thinkbottomup.com.au/site/blog/Game_of_Life_in_XAML_WPF_using_embedded_Python
+        /// </summary>
         private void AreamapToBindableGrid()
         {
             for(var i = 0; i < AreaMap.Grid.GetLength(0); i++)
@@ -178,86 +161,89 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Return the current map state of the editor to a 2D array of Tiles
+        /// </summary>
+        /// <param name="flattenedAreaMap"></param>
+        /// <returns>The updated grid in its DTO form</returns>
+        private Tile[,] BindableGridToAreaMap(List<ObservableCollection<Tile>> flattenedAreaMap)
+        {
+            Console.WriteLine("Grid serialisation not yet implemented!");
+            return AreaMap.Grid;
+        }
+
+        /// <summary>
+        ///     Save the map state by event
+        /// </summary>
         private void SaveMap()
         {
+            AreaMap.Grid = BindableGridToAreaMap(_flattenedAreaMap);
             Messenger.Default.Send(new SaveMapMessage(AreaMap));
         }
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            Console.WriteLine($"changed {propertyName}");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        /// <summary>
+        ///     Print the content of the current loaded AreaMap
+        ///     for debugging. Only prints the sprite name for now.
+        /// </summary>
         private void PrintMap()
         {
             Console.WriteLine($@"Content of map '{AreaMap.Name}':");
-            Console.WriteLine(@"Done.");
             for(var i = 0; i < AreaMap.Rows; i++)
             {
                 Console.Write("\t");
-                for(var j = 0; j < AreaMap.Columns; j++) Console.Write($@"{AreaMap.Grid[ i, j ]}, ");
+                for(var j = 0; j < AreaMap.Columns; j++)
+                    Console.Write($@"{AreaMap.Grid[ i, j ]?.SpriteName}, ");
 
                 Console.WriteLine();
             }
-
-            Console.WriteLine(@"Done.");
         }
 
-        // Load from JSON
+        /// <summary>
+        ///     Import data for a single area
+        /// </summary>
         private void ImportMap()
         {
-            var openFileDialog = new OpenFileDialog{ InitialDirectory = Directory.GetCurrentDirectory() };
-
-            if(openFileDialog.ShowDialog() != true)
-                return;
-
-            try
-            {
-                var jsonZone = File.ReadAllText(openFileDialog.FileName);
-                AreaMap = JsonConvert.DeserializeObject<AreaMap>(jsonZone);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Error: \n" + ex.Message);
-                throw;
-            }
+            _mapEditorService.LoadAreaMap(
+                (areaMap, error) => {
+                    if(error != null)
+                        MessageBox.Show("Could not load world from service: " + error.Message);
+                    else
+                    {
+                        if(areaMap != null)
+                        {
+                            Console.WriteLine("Loaded!");
+                            AreaMap = areaMap;
+                            AreamapToBindableGrid();
+                        }
+                    }
+                });
         }
 
-        // Save to JSON
+        /// <summary>
+        ///     Export the current area on its own
+        /// </summary>
         private void ExportMap()
         {
-            var jsonConvertZone = JsonConvert.SerializeObject(AreaMap);
-
-            var filename = string.Empty.Equals(AreaMap.Name) || null == AreaMap.Name ? "newMap" : AreaMap.Name;
-            filename += ".json";
-
-            var saveFileDialog = new SaveFileDialog{
-                FileName = filename,
-                InitialDirectory = Directory.GetCurrentDirectory(),
-                Filter = "JSON file (*.json)|*.json"
-            };
-            AreaMap.Name = saveFileDialog.SafeFileName;
-
-            if(saveFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    File.WriteAllText(saveFileDialog.FileName, jsonConvertZone);
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show("Error: \n" + ex.Message);
-                }
-            }
+            AreaMap.Grid = BindableGridToAreaMap(_flattenedAreaMap);
+            _mapEditorService.SaveAreaMap(AreaMap);
         }
 
+
+        /// <summary>
+        ///     Invalidates the map.
+        ///     TODO: Make ClearMap produce a valid AreaMap
+        /// </summary>
         private void ClearMap()
         {
             AreaMap.Fill(null);
         }
 
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            Console.WriteLine($"{propertyName} modified.");
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public new event PropertyChangedEventHandler PropertyChanged;
     }

@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:GameEditor"
-             xmlns:models="clr-namespace:GameEditor.Models"
              xmlns:vms="clr-namespace:GameEditor.ViewModels"
              xmlns:views="clr-namespace:GameEditor.Views"
              xmlns:services="clr-namespace:GameEditor.Services"

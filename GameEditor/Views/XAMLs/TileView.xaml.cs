@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
-using GameEditor.Models;
+﻿using System.Windows.Controls;
 
 namespace GameEditor.Views
 {

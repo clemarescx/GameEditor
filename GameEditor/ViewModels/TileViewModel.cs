@@ -6,6 +6,9 @@ using GameEditor.Properties;
 
 namespace GameEditor.ViewModels
 {
+    /// <summary>
+    ///     Bindings for visualising a Tile object
+    /// </summary>
     public class TileViewModel : ViewModelBase, INotifyPropertyChanged
     {
         private string _creatureToSpawn;

@@ -5,6 +5,10 @@ namespace GameEditor.Messages
 {
     public class SaveMapMessage : MessageBase
     {
+        /// <summary>
+        /// Container for transferring areamap data through MvvmLight messenging
+        /// </summary>
+        /// <param name="savedMap"></param>
         public SaveMapMessage(AreaMap savedMap)
         {
             SavedMap = savedMap;

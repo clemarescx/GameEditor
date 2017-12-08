@@ -12,11 +12,7 @@ namespace GameEditor.Services
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var filename = (string)value;
-            var img = new BitmapImage();
-            if(value != null)
-                img = SpriteLoader.TerrainSprites[ filename ];
-            else
-                img = SpriteLoader.ErrorSprite;
+            var img = value != null ? SpriteLoader.TerrainSprites[ filename ] : SpriteLoader.ErrorSprite;
             return img;
         }
 

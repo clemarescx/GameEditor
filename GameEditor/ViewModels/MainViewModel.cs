@@ -2,7 +2,7 @@
 
 namespace GameEditor.ViewModels
 {
-    public partial class ViewModelLocator
+    public class ViewModelLocator
     {
         public class MainViewModel : ViewModelBase
         { }

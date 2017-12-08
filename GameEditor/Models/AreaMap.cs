@@ -18,16 +18,7 @@ namespace GameEditor.Models
         public string Name{ get; set; }
 
         [JsonConstructor]
-        public AreaMap() : this("newMap")
-        {
-        }
-        public AreaMap(string mapName) : this(8, mapName, "sand_1.png")
-        {
-        }
-        public AreaMap(string mapName, string defaultSpriteName) : this(8, mapName, defaultSpriteName)
-        {
-        }
-        private AreaMap(int size, string mapName, string defaultSpriteName)
+        public AreaMap(string mapName= "newMap", string defaultSpriteName= "sand_1.png", int size=8 )
         {
             Name = mapName;
             Grid = new Tile[size, size];

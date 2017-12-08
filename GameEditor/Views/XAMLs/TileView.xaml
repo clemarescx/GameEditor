@@ -23,7 +23,7 @@
             <!--        <Image Name="TerrainSprite"-->
             <!--               Height="auto"-->
             <!--               Width="100%"-->
-            <!--               Source="{Binding SpriteName}" />-->
+            <!--               Source="{Binding SpriteName, Converter=????? }" />-->
             <!--        <Image Name="SpawnSprite"-->
             <!--               VerticalAlignment="Top"-->
             <!--               HorizontalAlignment="Right"-->
@@ -32,8 +32,8 @@
             <!--        <Image Name="PortalSprite"-->
             <!--               VerticalAlignment="Top"-->
             <!--               HorizontalAlignment="Right"-->
-            <!--               Visibility="{Binding CreatureToSpawn}"-->
-            <!--               Source="../Resources/tiles/logic/spawn_player.png" />-->
+            <!--               Visibility="{Binding DestinationAreaName}"-->
+            <!--               Source="../Resources/tiles/logic/trigger_portal.png" />-->
         </Grid>
     </Border>
 </UserControl>

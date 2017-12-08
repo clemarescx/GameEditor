@@ -3,25 +3,26 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GameEditor.Design;
 using GameEditor.Services;
+using GameEditor.ViewModels;
 using Microsoft.Practices.ServiceLocation;
 
-namespace GameEditor.ViewModels
+namespace GameEditor
 {
     /// <summary>
     ///     This class contains static references to all the view models in the
     ///     application and provides an entry point for the bindings.
     /// </summary>
-    public partial class ViewModelLocator
+    public class ViewModelLocator
     {
-        
         /// <summary>
-        ///     Gets the MainViewModel property.
+        ///     Instantiation of all ViewModels here
         /// </summary>
         [SuppressMessage(
             "Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
-        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        public ViewModels.ViewModelLocator.MainViewModel Main =>
+            ServiceLocator.Current.GetInstance<ViewModels.ViewModelLocator.MainViewModel>();
         public MapEditorViewModel MapEditor => ServiceLocator.Current.GetInstance<MapEditorViewModel>();
         public WorldEditorViewModel WorldEditor => ServiceLocator.Current.GetInstance<WorldEditorViewModel>();
         public TileViewModel TileView => ServiceLocator.Current.GetInstance<TileViewModel>();
@@ -32,7 +33,7 @@ namespace GameEditor.ViewModels
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<ViewModels.ViewModelLocator.MainViewModel>();
 
             if(ViewModelBase.IsInDesignModeStatic)
             {
@@ -53,7 +54,7 @@ namespace GameEditor.ViewModels
 
         public static void Cleanup()
         {
-//            throw new System.NotImplementedException();
+            //            throw new System.NotImplementedException();
         }
     }
 }

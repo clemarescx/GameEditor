@@ -5,7 +5,11 @@ using GameEditor.Models;
 
 namespace GameEditor.Services
 {
-    // Converter to unpack a Tile's sprite from within XAML view file
+
+    /// <summary>
+    /// unpack an AreaMap's name from within XAML view file.
+    /// ...Perhaps unnecessary.
+    /// </summary>
     [ValueConversion(typeof(AreaMap), typeof(string))]
     public class MapToMapnameStringConverter : IValueConverter
     {

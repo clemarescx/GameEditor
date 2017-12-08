@@ -33,8 +33,9 @@ namespace GameEditor.ViewModels
         private AreaMap _selectedMap;
         private WorldMap _worldMap;
 
+        ///////
         // All member data with OnPropertyChanged()
-        // are watched for updates by the XAML view
+        // are tracked for updates by the view
         public ObservableCollection<AreaMap> AreaMaps
         {
             get => _areaMaps;
@@ -45,7 +46,9 @@ namespace GameEditor.ViewModels
                 Messenger.Default.Send(new AreamapsAvailableMessage(new List<AreaMap>(_areaMaps)));
             }
         }
-
+        /// <summary>
+        ///     A copy of the loaded model.
+        /// </summary>
         public WorldMap WorldMap
         {
             get => _worldMap;
@@ -71,9 +74,15 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Load the worldmap model
+        /// </summary>
         public RelayCommand BtnLoadWorldCommand =>
             _btnLoadWorldCommand ?? ( _btnLoadWorldCommand = new RelayCommand(LoadWorld) );
 
+        /// <summary>
+        ///     Save the current worldmap
+        /// </summary>
         public RelayCommand BtnSaveWorldCommand
         {
             get
@@ -83,6 +92,9 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Add an area map to the world
+        /// </summary>
         public RelayCommand BtnAddMapCommand
         {
             get
@@ -97,6 +109,9 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Remove an area map from the world
+        /// </summary>
         public RelayCommand BtnRemoveMapCommand
         {
             get
@@ -108,9 +123,15 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Create a new world map with one area map by default
+        /// </summary>
         public RelayCommand BtnCreateWorldCommand =>
             _btnCreateWorldCommand ?? ( _btnCreateWorldCommand = new RelayCommand(CreateWorld) );
 
+        /// <summary>
+        ///     Command to print the content of the loaded WorldMap
+        /// </summary>
         public RelayCommand BtnWorldPrintCommand
         {
             get
@@ -120,6 +141,12 @@ namespace GameEditor.ViewModels
             }
         }
 
+        /// <summary>
+        ///     ViewModel for the WorldEditor view. Contains commands and functionality
+        ///     that would otherwise be in the code-behind.
+        ///     The constructor registers to messages fired by other viewModels.
+        /// </summary>
+        /// <param name="service"></param>
         public WorldEditorViewModel(IWorldEditorService service)
         {
             _worldEditorService = service;
@@ -127,6 +154,7 @@ namespace GameEditor.ViewModels
 
             // inter-viewModel messaging system 
             // with MVVMlight ;)
+            // Update the selected areamap with the one opened in MapEditor
             Messenger.Default.Register<SaveMapMessage>(
                 this,
                 msg => {
@@ -167,6 +195,11 @@ namespace GameEditor.ViewModels
             PrintWorld();
         }
 
+        /// <summary>
+        ///     A debug function to make sure the ObservableCollection AreaMaps
+        ///     and the WorldMap DTO's area maps are synchronised when it matters
+        ///     (e.g: when saving the world map)
+        /// </summary>
         private void PrintWorld()
         {
             Console.WriteLine($@"Content of world '{WorldMap.Name}':");
@@ -178,7 +211,9 @@ namespace GameEditor.ViewModels
                 Console.WriteLine($@"	{m.Name}");
         }
 
-        // "Proof of concept" to use the Service class
+        /// <summary>
+        ///     Load the world by callback from associated service.
+        /// </summary>
         private void LoadWorld()
         {
             if(WorldMap != null)
@@ -217,7 +252,9 @@ namespace GameEditor.ViewModels
                 });
         }
 
-        // Save to JSON
+        /// <summary>
+        ///     WE'RE GONNA SAVE THE *burrp* WORLD MORTY
+        /// </summary>
         private void SaveWorld()
         {
             WorldMap.Areas = AreaMaps.ToList();
@@ -225,10 +262,16 @@ namespace GameEditor.ViewModels
             PrintWorld();
         }
 
+        /// <summary>
+        ///     "Enhanced" implementation of INotifyPropertyChanged,
+        ///     [CallerMemberName] automatically finds the source property
+        ///     calling it. No more bugs from spelling mistakes in the argument string!
+        /// </summary>
+        /// <param name="propertyName"></param>
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            Console.WriteLine($"changed {propertyName}");
+            Console.WriteLine($"{propertyName} modified.");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

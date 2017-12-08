@@ -6,12 +6,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gameEditor="clr-namespace:GameEditor"
              mc:Ignorable="d">
-   
+
     <Application.Resources>
         <!--Global View Model Locator-->
-        <vm:ViewModelLocator
-            x:Key="Locator" 
-            d:isDataSource="True"
-            xmlns:vm="clr-namespace:GameEditor.ViewModels"/>
+        <gameEditor:ViewModelLocator x:Key="Locator"
+                                     d:isDataSource="True"
+                                     xmlns:vm="clr-namespace:GameEditor.ViewModels" />
     </Application.Resources>
 </Application>
