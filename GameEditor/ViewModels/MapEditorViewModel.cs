@@ -24,10 +24,10 @@ namespace GameEditor.ViewModels
         private readonly IMapEditorService _mapEditorService;
 
 
-        private AreaMap _areaMap;
+        private Map _map;
         private string _brushTile;
         private List<ObservableCollection<Tile>> _flattenedAreaMap = new List<ObservableCollection<Tile>>();
-        private ObservableCollection<AreaMap> _otherAreaMaps;
+        private ObservableCollection<Map> _otherAreaMaps;
         private Tile _selectedTile;
 
         public ObservableCollection<string> TerrainSpriteNames{ get; set; }
@@ -42,16 +42,16 @@ namespace GameEditor.ViewModels
         public RelayCommand BtnSaveMapCommand{ get; }
 
 
-        public AreaMap AreaMap
+        public Map Map
         {
-            get => _areaMap;
+            get => _map;
             set
             {
-                if(_areaMap == value)
+                if(_map == value)
 
                     return;
 
-                _areaMap = value;
+                _map = value;
                 OnPropertyChanged();
             }
         }
@@ -97,13 +97,13 @@ namespace GameEditor.ViewModels
         /// <summary>
         ///     Bound to "Portal cell" dropdown in "Tile properties" box
         /// </summary>
-        public ObservableCollection<AreaMap> OtherAreaMaps
+        public ObservableCollection<Map> OtherAreaMaps
         {
             get => _otherAreaMaps;
             set
             {
                 _otherAreaMaps = value;
-                _otherAreaMaps.Remove(_areaMap);
+                _otherAreaMaps.Remove(_map);
                 OnPropertyChanged();
             }
         }
@@ -119,28 +119,28 @@ namespace GameEditor.ViewModels
         {
             _mapEditorService = service;
 
-            // When selecting a map in the WorldEditor view, it is sent to this view
-            // as the working AreaMap.
+            // When selecting a map in the CampaignEditor view, it is sent to this view
+            // as the working Map.
             Messenger.Default.Register<MapSelectedMessage>(
                 this,
                 msg => {
-                    AreaMap = msg.SelectedMap;
-                    if(AreaMap != null)
+                    Map = msg.SelectedMap;
+                    if(Map != null)
                         AreamapToBindableGrid();
                 });
 
-            Messenger.Default.Register<AreamapsAvailableMessage>(
+            Messenger.Default.Register<AvailableMapsMessage>(
                 this,
-                msg => { OtherAreaMaps = new ObservableCollection<AreaMap>(msg.AllMaps); });
+                msg => { OtherAreaMaps = new ObservableCollection<Map>(msg.AllMaps); });
 
             // For the list of sprites used in the sprite selector
             TerrainSpriteNames = new ObservableCollection<string>(SpriteLoader.TerrainSprites.Keys);
 
-            BtnPrintMapCommand = new RelayCommand(PrintMap, () => AreaMap != null);
+            BtnPrintMapCommand = new RelayCommand(PrintMap, () => Map != null);
             BtnImportMapCommand = new RelayCommand(ImportMap);
-            BtnExportMapCommand = new RelayCommand(ExportMap, () => AreaMap != null);
+            BtnExportMapCommand = new RelayCommand(ExportMap, () => Map != null);
             BtnClearMapCommand = new RelayCommand(ClearMap);
-            BtnDebugCommand = new RelayCommand(() => AreaMap = new AreaMap("CreatedfromDebug"));
+            BtnDebugCommand = new RelayCommand(() => Map = new Map("CreatedfromDebug"));
             BtnSaveMapCommand = new RelayCommand(SaveMap);
         }
 
@@ -152,12 +152,13 @@ namespace GameEditor.ViewModels
         /// </summary>
         private void AreamapToBindableGrid()
         {
-            for(var i = 0; i < AreaMap.Grid.GetLength(0); i++)
+            FlattenedAreaMap.Clear();
+            for(var i = 0; i < Map.Grid.GetLength(0); i++)
             {
                 FlattenedAreaMap.Add(new ObservableCollection<Tile>());
 
-                for(var j = 0; j < AreaMap.Grid.GetLength(1); j++)
-                    FlattenedAreaMap[ i ].Add(AreaMap.Grid[ i, j ]);
+                for(var j = 0; j < Map.Grid.GetLength(1); j++)
+                    FlattenedAreaMap[ i ].Add(Map.Grid[ i, j ]);
             }
         }
 
@@ -169,7 +170,7 @@ namespace GameEditor.ViewModels
         private Tile[,] BindableGridToAreaMap(List<ObservableCollection<Tile>> flattenedAreaMap)
         {
             Console.WriteLine("Grid serialisation not yet implemented!");
-            return AreaMap.Grid;
+            return Map.Grid;
         }
 
         /// <summary>
@@ -177,22 +178,22 @@ namespace GameEditor.ViewModels
         /// </summary>
         private void SaveMap()
         {
-            AreaMap.Grid = BindableGridToAreaMap(_flattenedAreaMap);
-            Messenger.Default.Send(new SaveMapMessage(AreaMap));
+            Map.Grid = BindableGridToAreaMap(_flattenedAreaMap);
+            Messenger.Default.Send(new SaveMapMessage(Map));
         }
 
         /// <summary>
-        ///     Print the content of the current loaded AreaMap
+        ///     Print the content of the current loaded Map
         ///     for debugging. Only prints the sprite name for now.
         /// </summary>
         private void PrintMap()
         {
-            Console.WriteLine($@"Content of map '{AreaMap.Name}':");
-            for(var i = 0; i < AreaMap.Rows; i++)
+            Console.WriteLine($@"Content of map '{Map.Name}':");
+            for(var i = 0; i < Map.Rows; i++)
             {
                 Console.Write("\t");
-                for(var j = 0; j < AreaMap.Columns; j++)
-                    Console.Write($@"{AreaMap.Grid[ i, j ]?.SpriteName}, ");
+                for(var j = 0; j < Map.Columns; j++)
+                    Console.Write($@"{Map.Grid[ i, j ]?.SpriteName}, ");
 
                 Console.WriteLine();
             }
@@ -203,7 +204,7 @@ namespace GameEditor.ViewModels
         /// </summary>
         private void ImportMap()
         {
-            _mapEditorService.LoadAreaMap(
+            _mapEditorService.LoadMap(
                 (areaMap, error) => {
                     if(error != null)
                         MessageBox.Show("Could not load world from service: " + error.Message);
@@ -212,7 +213,7 @@ namespace GameEditor.ViewModels
                         if(areaMap != null)
                         {
                             Console.WriteLine("Loaded!");
-                            AreaMap = areaMap;
+                            Map = areaMap;
                             AreamapToBindableGrid();
                         }
                     }
@@ -224,18 +225,18 @@ namespace GameEditor.ViewModels
         /// </summary>
         private void ExportMap()
         {
-            AreaMap.Grid = BindableGridToAreaMap(_flattenedAreaMap);
-            _mapEditorService.SaveAreaMap(AreaMap);
+            Map.Grid = BindableGridToAreaMap(_flattenedAreaMap);
+            _mapEditorService.SaveMap(Map);
         }
 
 
         /// <summary>
         ///     Invalidates the map.
-        ///     TODO: Make ClearMap produce a valid AreaMap
+        ///     TODO: Make ClearMap produce a valid Map
         /// </summary>
         private void ClearMap()
         {
-            AreaMap.Fill(null);
+            Map.Fill(null);
         }
 
         [NotifyPropertyChangedInvocator]
