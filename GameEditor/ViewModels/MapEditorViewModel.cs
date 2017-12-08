@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -22,11 +21,12 @@ namespace GameEditor.ViewModels
     public class MapEditorViewModel : ViewModelBase, INotifyPropertyChanged
     {
         private readonly IMapEditorService _mapEditorService;
+        private string _brushTile;
+        private ObservableCollection<ObservableCollection<Tile>> _flattenedAreaMap =
+            new ObservableCollection<ObservableCollection<Tile>>();
 
 
         private Map _map;
-        private string _brushTile;
-        private List<ObservableCollection<Tile>> _flattenedAreaMap = new List<ObservableCollection<Tile>>();
         private ObservableCollection<Map> _otherAreaMaps;
         private Tile _selectedTile;
 
@@ -52,6 +52,8 @@ namespace GameEditor.ViewModels
                     return;
 
                 _map = value;
+                if(_map != null)
+                    AreamapToBindableGrid();
                 OnPropertyChanged();
             }
         }
@@ -59,7 +61,7 @@ namespace GameEditor.ViewModels
         /// <summary>
         ///     Bound to the editor grid
         /// </summary>
-        public List<ObservableCollection<Tile>> FlattenedAreaMap
+        public ObservableCollection<ObservableCollection<Tile>> FlattenedAreaMap
         {
             get => _flattenedAreaMap;
             set
@@ -78,6 +80,7 @@ namespace GameEditor.ViewModels
             {
                 _brushTile = value;
                 OnPropertyChanged();
+                Console.WriteLine($"Sprite: {_brushTile}");
             }
         }
 
@@ -121,13 +124,7 @@ namespace GameEditor.ViewModels
 
             // When selecting a map in the CampaignEditor view, it is sent to this view
             // as the working Map.
-            Messenger.Default.Register<MapSelectedMessage>(
-                this,
-                msg => {
-                    Map = msg.SelectedMap;
-                    if(Map != null)
-                        AreamapToBindableGrid();
-                });
+            Messenger.Default.Register<MapSelectedMessage>(this, msg => { Map = msg.SelectedMap; });
 
             Messenger.Default.Register<AvailableMapsMessage>(
                 this,
@@ -140,8 +137,29 @@ namespace GameEditor.ViewModels
             BtnImportMapCommand = new RelayCommand(ImportMap);
             BtnExportMapCommand = new RelayCommand(ExportMap, () => Map != null);
             BtnClearMapCommand = new RelayCommand(ClearMap);
-            BtnDebugCommand = new RelayCommand(() => Map = new Map("CreatedfromDebug"));
+            BtnDebugCommand = new RelayCommand(DebugFunction);
             BtnSaveMapCommand = new RelayCommand(SaveMap);
+        }
+
+        private void DebugFunction()
+        {
+            var debugMap = new Map("CreatedfromDebug");
+            for(var i = 0; i < debugMap.Rows; i++)
+            {
+                for(var j = 0; j < debugMap.Columns; j++)
+                {
+                    if(i != j) continue;
+
+                    debugMap.Grid[ i, j ] = new Tile{
+                        SpriteName = "plateau_left.png",
+                        IsWalkable = true,
+                        IsSpawnPoint = true,
+                        IsTransitionSpot = true
+                    };
+                }
+            }
+
+            Map = debugMap;
         }
 
         /// <summary>
@@ -152,6 +170,7 @@ namespace GameEditor.ViewModels
         /// </summary>
         private void AreamapToBindableGrid()
         {
+            Console.WriteLine("Map to grid");
             FlattenedAreaMap.Clear();
             for(var i = 0; i < Map.Grid.GetLength(0); i++)
             {
@@ -167,10 +186,10 @@ namespace GameEditor.ViewModels
         /// </summary>
         /// <param name="flattenedAreaMap"></param>
         /// <returns>The updated grid in its DTO form</returns>
-        private Tile[,] BindableGridToAreaMap(List<ObservableCollection<Tile>> flattenedAreaMap)
+        private Tile[,] BindableGridToAreaMap(ObservableCollection<ObservableCollection<Tile>> flattenedAreaMap)
         {
             Console.WriteLine("Grid serialisation not yet implemented!");
-            return Map.Grid;
+            return Map?.Grid;
         }
 
         /// <summary>

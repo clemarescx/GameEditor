@@ -107,7 +107,6 @@
     </Compile>
     <Compile Include="Services\SpriteLoader.cs" />
     <Compile Include="Services\MapEditorService.cs" />
-    <Compile Include="Services\MapToMapnameStringConverter.cs" />
     <Compile Include="Services\CampaignEditorService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />

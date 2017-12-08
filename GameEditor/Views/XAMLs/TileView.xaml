@@ -20,6 +20,11 @@
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Visibility="{Binding IsWalkable}" />
+            <!--<Rectangle Name="WalkableMarker"
+                    Fill="DeepPink"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Visibility="{Binding IsWalkable}" />-->
             <!--        <Image Name="TerrainSprite"-->
             <!--               Height="auto"-->
             <!--               Width="100%"-->

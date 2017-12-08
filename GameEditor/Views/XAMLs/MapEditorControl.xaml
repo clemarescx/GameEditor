@@ -6,6 +6,7 @@
              xmlns:vms="clr-namespace:GameEditor.ViewModels"
              xmlns:views="clr-namespace:GameEditor.Views"
              xmlns:services="clr-namespace:GameEditor.Services"
+             xmlns:models="clr-namespace:GameEditor.Models"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="800"
@@ -19,12 +20,31 @@
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
-
         </Style>
         <services:StringToTerrainSpriteConverter x:Key="StringToTerrainSpriteConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <NullableBoolConverter x:Key="NullableBoolConverter" />
         <DataTemplate x:Key="TileTemplate"
-                      DataType="{x:Type vms:TileViewModel}">
-            <views:TileView />
+                      DataType="{x:Type models:Tile}">
+            <Grid>
+                <Image Source="{Binding SpriteName, Converter={StaticResource StringToTerrainSpriteConverter} }" />
+                <Border Name="WalkableMarker"
+                        BorderBrush="DeepPink"
+                        BorderThickness="4"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Visibility="{Binding IsWalkable, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Image Width="15"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Source="../../Resources/tiles/logic/spawn_creature.png"
+                       Visibility="{Binding IsSpawnPoint, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Image Width="15"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Source="../../Resources/tiles/logic/trigger_portal.png"
+                       Visibility="{Binding IsTransitionSpot, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="RowTemplate">
             <ListBox BorderThickness="0"
@@ -133,7 +153,7 @@
                                              Visibility="{Binding Path=IsSpawnPoint}" />
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Portal cell:"
+                                    <Label Content="_Portal tile:"
                                            Target="{Binding ElementName=TxtDestination}" />
                                     <CheckBox Name="ChkPortal"
                                               VerticalAlignment="Center"

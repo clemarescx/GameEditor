@@ -166,6 +166,8 @@ namespace GameEditor.ViewModels
                         SelectedMap = msg.SavedMap;
                     }
                 });
+            
+            CreateCampaign();
         }
 
         private void CreateCampaign()

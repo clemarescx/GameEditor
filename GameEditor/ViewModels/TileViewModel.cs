@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using GalaSoft.MvvmLight;
+using GameEditor.Models;
 using GameEditor.Properties;
 
 namespace GameEditor.ViewModels
@@ -15,6 +16,16 @@ namespace GameEditor.ViewModels
         private string _destinationAreaName;
         private bool _isWalkable;
         private string _spriteName;
+        private Tile _tile;
+        public Tile Tile
+        {
+            get => _tile;
+            set
+            {
+                _tile = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string SpriteName
         {
