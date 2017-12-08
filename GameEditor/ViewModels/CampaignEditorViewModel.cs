@@ -160,14 +160,13 @@ namespace GameEditor.ViewModels
                 msg => {
                     if(CampaignMaps.Contains(SelectedMap))
                     {
-                        Console.WriteLine("Removing '{0}'", SelectedMap.Name);
+                        Console.WriteLine("Updating '{0}'", SelectedMap.Name);
                         CampaignMaps.Remove(SelectedMap);
+                    }
                         CampaignMaps.Add(msg.SavedMap);
                         SelectedMap = msg.SavedMap;
-                    }
                 });
             
-            CreateCampaign();
         }
 
         private void CreateCampaign()

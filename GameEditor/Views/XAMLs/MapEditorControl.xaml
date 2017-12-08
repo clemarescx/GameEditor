@@ -24,34 +24,14 @@
         <services:StringToTerrainSpriteConverter x:Key="StringToTerrainSpriteConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <NullableBoolConverter x:Key="NullableBoolConverter" />
-        <DataTemplate x:Key="TileTemplate"
-                      DataType="{x:Type models:Tile}">
-            <Grid>
-                <Image Source="{Binding SpriteName, Converter={StaticResource StringToTerrainSpriteConverter} }" />
-                <Border Name="WalkableMarker"
-                        BorderBrush="DeepPink"
-                        BorderThickness="4"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Visibility="{Binding IsWalkable, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <Image Width="15"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       Source="../../Resources/tiles/logic/spawn_creature.png"
-                       Visibility="{Binding IsSpawnPoint, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <Image Width="15"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Top"
-                       Source="../../Resources/tiles/logic/trigger_portal.png"
-                       Visibility="{Binding IsTransitionSpot, Converter={StaticResource BoolToVisibilityConverter}}" />
-            </Grid>
-        </DataTemplate>
-        <DataTemplate x:Key="RowTemplate">
+
+        <!--<DataTemplate x:Key="RowTemplate">
             <ListBox BorderThickness="0"
                      ItemsSource="{Binding}"
                      Style="{StaticResource HorizontalListBox}"
-                     ItemTemplate="{StaticResource TileTemplate}" />
-        </DataTemplate>
+                     ItemTemplate="{StaticResource TileTemplate}"
+                     SelectedItem="{Binding Path=SelectedTile}" />
+        </DataTemplate>-->
 
     </UserControl.Resources>
 
@@ -74,7 +54,26 @@
                                  TextWrapping="Wrap"
                                  Text="{Binding Map.Name, Mode=TwoWay}" />
                     </DockPanel>
-
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="6*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Mode:"
+                               VerticalAlignment="Center" />
+                        <RadioButton Grid.Column="1"
+                                     VerticalAlignment="Center"
+                                     Command="{Binding RbtnPaintModeCommand}">
+                            Paint
+                        </RadioButton>
+                        <RadioButton Grid.Column="2"
+                                     VerticalAlignment="Center"
+                                     Command="{Binding RbtnSelectModeCommand}"
+                                     IsChecked="True">
+                            Select
+                        </RadioButton>
+                    </Grid>
                     <WrapPanel Margin="0,5">
                         <Label Content="_Tile:"
                                Target="{Binding ElementName=TxtMapName}" />
@@ -133,37 +132,43 @@
                                 BorderBrush="Gray"
                                 BorderThickness="1"
                                 Grid.Row="2">
-                            <StackPanel DataContext="{Binding SelectedTile}">
+                            <StackPanel DataContext="{Binding SelectedTile, Mode=TwoWay}">
                                 <Label Content="Tile Properties" />
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Walkable:"
-                                           Target="{Binding ElementName=TxtProperty}" />
+                                    <Label Content="_Walkable:" />
                                     <CheckBox Name="ChkWalkable"
                                               VerticalAlignment="Center"
-                                              IsChecked="{Binding Path=IsWalkable}" />
+                                              IsChecked="{Binding Path=IsWalkable, Mode=TwoWay}" />
                                 </DockPanel>
                                 <DockPanel Margin="0,5">
-                                    <Label Content="_Creature spawn:"
-                                           Target="{Binding ElementName=TxtSpawnCreature}" />
+                                    <Label Content="_NPC spawn:" />
                                     <CheckBox Name="ChkSpawn"
                                               VerticalAlignment="Center"
-                                              IsChecked="{Binding Path=IsSpawnPoint}" />
-                                    <TextBox Name="TxtSpawnCreature"
-                                             TextWrapping="Wrap"
-                                             Visibility="{Binding Path=IsSpawnPoint}" />
-                                </DockPanel>
-                                <DockPanel Margin="0,5">
-                                    <Label Content="_Portal tile:"
-                                           Target="{Binding ElementName=TxtDestination}" />
-                                    <CheckBox Name="ChkPortal"
-                                              VerticalAlignment="Center"
-                                              IsChecked="{Binding Path=IsTransitionSpot}" />
-                                    <ComboBox Name="TxtDestination"
-                                              ItemsSource="{Binding Source={StaticResource Locator}, Path=MapEditor.OtherAreaMaps}"
-                                              Visibility="{Binding  Path=IsTransitionSpot}">
+                                              IsChecked="{Binding Path=IsSpawnPoint, Mode=TwoWay}" />
+                                    <ComboBox Name="cbbSpawnCharacter"
+                                              ItemsSource="{Binding Source={StaticResource Locator}, Path=MapEditor.Characters}"
+                                              Visibility="{Binding Path=IsSpawnPoint, Converter={StaticResource BoolToVisibilityConverter}}"
+                                              SelectedItem="{Binding CharacterToSpawn, Mode=TwoWay}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Path=Name}" />
+                                                <TextBlock Text="{Binding Path=Name, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel Margin="0,5">
+                                    <Label Content="_Portal tile:" />
+                                    <CheckBox Name="ChkPortal"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding Path=IsTransitionSpot, Mode=TwoWay}" />
+                                    <ComboBox Name="cbbDestination"
+                                              ItemsSource="{Binding Source={StaticResource Locator}, Path=MapEditor.OtherMaps}"
+                                              Visibility="{Binding Path=IsTransitionSpot, Converter={StaticResource BoolToVisibilityConverter}}"
+                                              SelectedItem="{Binding DestinationAreaName, Mode=TwoWay}"
+                                              SelectedIndex="0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Path=Name, Mode=TwoWay}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
@@ -197,17 +202,44 @@
                     BorderBrush="Aquamarine"
                     BorderThickness="3">
 
-                <ListBox BorderThickness="0"
-                         ItemsSource="{Binding FlattenedAreaMap}"
-                         ItemTemplate="{StaticResource RowTemplate}" />
-                <!--                <DataGrid Margin="20"-->
-                <!--                          Name="TerrainMapGrid"-->
-                <!--                          >-->
-                <!--                    <ItemsControl ItemsSource="{Binding FlattenedAreaMap }">-->
-                <!--                        <views:TileView/>-->
-                <!--                    </ItemsControl>-->
-                <!--                </DataGrid>-->
-
+                <ListBox Name="MapGrid"
+                         BorderThickness="0"
+                         ItemsSource="{Binding TileGrid}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <ListBox BorderThickness="0"
+                                     ItemsSource="{Binding}"
+                                     Style="{StaticResource HorizontalListBox}"
+                                     SelectionMode="Single"
+                                     SelectedItem="{Binding Source={StaticResource Locator}, Path=MapEditor.SelectedTile}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Image
+                                                Source="{Binding SpriteName, Converter={StaticResource StringToTerrainSpriteConverter} }" />
+                                            <Border Name="WalkableMarker"
+                                                    BorderBrush="DeepPink"
+                                                    BorderThickness="4"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Visibility="{Binding IsWalkable, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            <Image Width="15"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top"
+                                                   Source="../../Resources/tiles/logic/spawn_creature.png"
+                                                   Visibility="{Binding IsSpawnPoint, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            <Image Width="15"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"
+                                                   Source="../../Resources/tiles/logic/trigger_portal.png"
+                                                   Visibility="{Binding IsTransitionSpot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Border>
             <StackPanel Grid.Row="1"
                         Grid.Column="1"
@@ -227,7 +259,7 @@
                         Content="Print to console"
                         Command="{Binding BtnPrintMapCommand}" />
                 <Button Margin="2,0"
-                        Content="DebugFunctions"
+                        Content="Create debug map"
                         Command="{Binding BtnDebugCommand}" />
             </StackPanel>
         </Grid>

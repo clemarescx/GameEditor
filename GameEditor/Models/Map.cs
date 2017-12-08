@@ -10,8 +10,8 @@ namespace GameEditor.Models
         public int Columns => Grid.GetLength(1);
 
 //        public Dictionary<int, string> TerrainSpriteNameTable{ get; set; }
-//        public Dictionary<int, string> CreatureNameTable{ get; set; }
-//        public Dictionary<int, Point> CreatureSpawnTable{ get; set; }
+//        public Dictionary<int, string> CharacterNameTable{ get; set; }
+//        public Dictionary<int, Point> CharacterSpawnTable{ get; set; }
 //        public int[,] Grid{ get; set; }
         public Tile[,] Grid{ get; set; }
 

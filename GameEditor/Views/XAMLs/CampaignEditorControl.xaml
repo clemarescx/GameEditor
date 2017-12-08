@@ -23,66 +23,71 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="6*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <WrapPanel Grid.Row="0"
-                   Grid.Column="1"
-                   Grid.ColumnSpan="2"
-                   Orientation="Horizontal"
-                   Margin="5">
-            <Button Margin="5,2"
-                    Content="Create campaign"
-                    Command="{Binding BtnCreateCampaignCommand}" />
-            <Button Margin="5,2"
-                    Content="Load campaign"
-                    Command="{Binding BtnLoadCampaignCommand}" />
-            <Button Margin="5,2"
-                    Content="Save campaign"
-                    Command="{Binding BtnSaveCampaignCommand}" />
-            <Button Margin="5,2"
-                    Content="Print campaign content"
-                    Command="{Binding BtnPrintCampaignCommand}" />
+        <Border Grid.Row="2"
+                Grid.Column="1"
+                BorderThickness="1"
+                BorderBrush="Aqua">
+            <StackPanel Margin="5">
+                <Button Margin="5,2"
+                        Content="Create campaign"
+                        Command="{Binding BtnCreateCampaignCommand}" />
+                <Button Margin="5,2"
+                        Content="Load campaign"
+                        Command="{Binding BtnLoadCampaignCommand}" />
+                <Button Margin="5,2"
+                        Content="Save campaign"
+                        Command="{Binding BtnSaveCampaignCommand}" />
+            </StackPanel>
+        </Border>
 
-        </WrapPanel>
+
+        <Button Grid.Row="3"
+                Grid.Column="1"
+                Margin="5,2"
+                Content="Print campaign content"
+                Command="{Binding BtnPrintCampaignCommand}" />
         <StackPanel Grid.Row="1"
-                   Grid.Column="1"
+                    Grid.Column="3"
                     Grid.ColumnSpan="2"
                     Orientation="Horizontal"
-                   >
+                    Visibility="{Binding CurrentCampaign}">
             <Label Content="_Name:"
                    Target="{Binding ElementName=TxtCampaignName}" />
             <TextBox Name="TxtCampaignName"
                      Visibility="{Binding CurrentCampaign}"
-                     Text="{Binding CurrentCampaign.Name, Mode=TwoWay}" 
-                     />
+                     Text="{Binding CurrentCampaign.Name, Mode=TwoWay}" />
         </StackPanel>
         <StackPanel Grid.Row="2"
-                    Grid.Column="1">
-            <Button Content="Add map"
-                    Command="{Binding BtnAddMapCommand}" />
-            <Button Content="Remove map"
-                    Command="{Binding BtnRemoveMapCommand}" />
+                    Grid.Column="3">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Add map"
+                        Command="{Binding BtnAddMapCommand}" />
+                <Button Content="Remove map"
+                        Command="{Binding BtnRemoveMapCommand}" />
+            </StackPanel>
+            <ListBox VerticalAlignment="Top"
+                     ItemsSource="{Binding CampaignMaps}"
+                     SelectedItem="{Binding SelectedMap}"
+                     Height="150"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectionMode="Single">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
-        <ListBox Grid.Row="2"
-                 Grid.Column="2"
-                 VerticalAlignment="Top"
-                 ItemsSource="{Binding CampaignMaps}"
-                 SelectedItem="{Binding SelectedMap}"
-                 Height="150"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 SelectionMode="Single">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Path=Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+
     </Grid>
 </UserControl>

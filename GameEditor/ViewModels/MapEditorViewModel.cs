@@ -22,13 +22,15 @@ namespace GameEditor.ViewModels
     {
         private readonly IMapEditorService _mapEditorService;
         private string _brushTile;
-        private ObservableCollection<ObservableCollection<Tile>> _flattenedAreaMap =
-            new ObservableCollection<ObservableCollection<Tile>>();
+        private ObservableCollection<Character> _characters;
 
 
         private Map _map;
-        private ObservableCollection<Map> _otherAreaMaps;
+        private ObservableCollection<Map> _otherMaps;
         private Tile _selectedTile;
+        private ObservableCollection<ObservableCollection<Tile>> _tileGrid =
+            new ObservableCollection<ObservableCollection<Tile>>();
+        private bool campaignLoaded;
 
         public ObservableCollection<string> TerrainSpriteNames{ get; set; }
 
@@ -40,6 +42,8 @@ namespace GameEditor.ViewModels
         public RelayCommand BtnClearMapCommand{ get; }
         public RelayCommand BtnDebugCommand{ get; }
         public RelayCommand BtnSaveMapCommand{ get; }
+        public RelayCommand RbtnPaintModeCommand{ get; }
+        public RelayCommand RbtnSelectModeCommand{ get; }
 
 
         public Map Map
@@ -53,7 +57,7 @@ namespace GameEditor.ViewModels
 
                 _map = value;
                 if(_map != null)
-                    AreamapToBindableGrid();
+                    MapToBindableGrid();
                 OnPropertyChanged();
             }
         }
@@ -61,12 +65,12 @@ namespace GameEditor.ViewModels
         /// <summary>
         ///     Bound to the editor grid
         /// </summary>
-        public ObservableCollection<ObservableCollection<Tile>> FlattenedAreaMap
+        public ObservableCollection<ObservableCollection<Tile>> TileGrid
         {
-            get => _flattenedAreaMap;
+            get => _tileGrid;
             set
             {
-                _flattenedAreaMap = value;
+                _tileGrid = value;
                 OnPropertyChanged();
             }
         }
@@ -100,13 +104,23 @@ namespace GameEditor.ViewModels
         /// <summary>
         ///     Bound to "Portal cell" dropdown in "Tile properties" box
         /// </summary>
-        public ObservableCollection<Map> OtherAreaMaps
+        public ObservableCollection<Map> OtherMaps
         {
-            get => _otherAreaMaps;
+            get => _otherMaps;
             set
             {
-                _otherAreaMaps = value;
-                _otherAreaMaps.Remove(_map);
+                _otherMaps = value;
+                // TODO: fix OtherMaps also showing current map in Destination tile dropdown box 
+                _otherMaps.Remove(_map);
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<Character> Characters
+        {
+            get => _characters;
+            set
+            {
+                _characters = value;
                 OnPropertyChanged();
             }
         }
@@ -128,7 +142,10 @@ namespace GameEditor.ViewModels
 
             Messenger.Default.Register<AvailableMapsMessage>(
                 this,
-                msg => { OtherAreaMaps = new ObservableCollection<Map>(msg.AllMaps); });
+                msg => {
+                    OtherMaps = new ObservableCollection<Map>(msg.AllMaps);
+                    campaignLoaded = true;
+                });
 
             // For the list of sprites used in the sprite selector
             TerrainSpriteNames = new ObservableCollection<string>(SpriteLoader.TerrainSprites.Keys);
@@ -138,7 +155,10 @@ namespace GameEditor.ViewModels
             BtnExportMapCommand = new RelayCommand(ExportMap, () => Map != null);
             BtnClearMapCommand = new RelayCommand(ClearMap);
             BtnDebugCommand = new RelayCommand(DebugFunction);
-            BtnSaveMapCommand = new RelayCommand(SaveMap);
+            BtnSaveMapCommand = new RelayCommand(SaveMap, ()=> campaignLoaded);
+            RbtnPaintModeCommand = new RelayCommand(() => { Console.WriteLine("Tile painting not implemented"); });
+            RbtnSelectModeCommand = new RelayCommand(() => { Console.WriteLine("Tile selection not implemented"); });
+            Map = new Map("");
         }
 
         private void DebugFunction()
@@ -148,14 +168,14 @@ namespace GameEditor.ViewModels
             {
                 for(var j = 0; j < debugMap.Columns; j++)
                 {
-                    if(i != j) continue;
-
-                    debugMap.Grid[ i, j ] = new Tile{
-                        SpriteName = "plateau_left.png",
-                        IsWalkable = true,
-                        IsSpawnPoint = true,
-                        IsTransitionSpot = true
-                    };
+                    debugMap.Grid[ i, j ] = new Tile{ SpriteName = "sand_1.png" };
+                    if(i == j)
+                    {
+                        debugMap.Grid[ i, j ].SpriteName = "plateau_left.png";
+                        debugMap.Grid[ i, j ].IsWalkable = true;
+                        debugMap.Grid[ i, j ].IsSpawnPoint = true;
+                        debugMap.Grid[ i, j ].IsTransitionSpot = true;
+                    }
                 }
             }
 
@@ -168,16 +188,16 @@ namespace GameEditor.ViewModels
         ///     was taken from:
         ///     http://www.thinkbottomup.com.au/site/blog/Game_of_Life_in_XAML_WPF_using_embedded_Python
         /// </summary>
-        private void AreamapToBindableGrid()
+        private void MapToBindableGrid()
         {
             Console.WriteLine("Map to grid");
-            FlattenedAreaMap.Clear();
+            TileGrid.Clear();
             for(var i = 0; i < Map.Grid.GetLength(0); i++)
             {
-                FlattenedAreaMap.Add(new ObservableCollection<Tile>());
+                TileGrid.Add(new ObservableCollection<Tile>());
 
                 for(var j = 0; j < Map.Grid.GetLength(1); j++)
-                    FlattenedAreaMap[ i ].Add(Map.Grid[ i, j ]);
+                    TileGrid[ i ].Add(Map.Grid[ i, j ]);
             }
         }
 
@@ -186,9 +206,15 @@ namespace GameEditor.ViewModels
         /// </summary>
         /// <param name="flattenedAreaMap"></param>
         /// <returns>The updated grid in its DTO form</returns>
-        private Tile[,] BindableGridToAreaMap(ObservableCollection<ObservableCollection<Tile>> flattenedAreaMap)
+        private Tile[,] BindableGridToMap(ObservableCollection<ObservableCollection<Tile>> flattenedAreaMap)
         {
-            Console.WriteLine("Grid serialisation not yet implemented!");
+            //            Console.WriteLine("Grid serialisation not yet implemented!");
+            for(var i = 0; i < flattenedAreaMap.Count; i++)
+            {
+                for(var j = 0; j < flattenedAreaMap[ i ].Count; j++)
+                    Map.Grid[ i, j ] = flattenedAreaMap[ i ][ j ];
+            }
+
             return Map?.Grid;
         }
 
@@ -197,8 +223,50 @@ namespace GameEditor.ViewModels
         /// </summary>
         private void SaveMap()
         {
-            Map.Grid = BindableGridToAreaMap(_flattenedAreaMap);
+            
+            Map.Grid = BindableGridToMap(_tileGrid);
             Messenger.Default.Send(new SaveMapMessage(Map));
+        }
+
+
+        /// <summary>
+        ///     Import data for a single area
+        /// </summary>
+        private void ImportMap()
+        {
+            _mapEditorService.LoadMap(
+                (areaMap, error) => {
+                    if(error != null)
+                        MessageBox.Show("Could not load world from service: " + error.Message);
+                    else
+                    {
+                        if(areaMap != null)
+                        {
+                            Console.WriteLine("Loaded!");
+                            Map = areaMap;
+                            MapToBindableGrid();
+                        }
+                    }
+                });
+        }
+
+        /// <summary>
+        ///     Export the current area on its own
+        /// </summary>
+        private void ExportMap()
+        {
+            Map.Grid = BindableGridToMap(_tileGrid);
+            _mapEditorService.SaveMap(Map);
+        }
+
+
+        /// <summary>
+        ///     Invalidates the map.
+        ///     TODO: Make ClearMap produce a valid Map
+        /// </summary>
+        private void ClearMap()
+        {
+            Map.Fill(null);
         }
 
         /// <summary>
@@ -216,46 +284,51 @@ namespace GameEditor.ViewModels
 
                 Console.WriteLine();
             }
-        }
 
-        /// <summary>
-        ///     Import data for a single area
-        /// </summary>
-        private void ImportMap()
-        {
-            _mapEditorService.LoadMap(
-                (areaMap, error) => {
-                    if(error != null)
-                        MessageBox.Show("Could not load world from service: " + error.Message);
+            Console.WriteLine("Walkable tiles:");
+            for(var i = 0; i < Map.Rows; i++)
+            {
+                Console.Write("\t");
+                for(var j = 0; j < Map.Columns; j++)
+                {
+                    if(Map.Grid[ i, j ] != null && Map.Grid[ i, j ].IsWalkable)
+                        Console.Write("W ");
                     else
-                    {
-                        if(areaMap != null)
-                        {
-                            Console.WriteLine("Loaded!");
-                            Map = areaMap;
-                            AreamapToBindableGrid();
-                        }
-                    }
-                });
-        }
+                        Console.Write(". ");
+                }
 
-        /// <summary>
-        ///     Export the current area on its own
-        /// </summary>
-        private void ExportMap()
-        {
-            Map.Grid = BindableGridToAreaMap(_flattenedAreaMap);
-            _mapEditorService.SaveMap(Map);
-        }
+                Console.WriteLine();
+            }
 
+            Console.WriteLine("Spawn tiles:");
+            for(var i = 0; i < Map.Rows; i++)
+            {
+                Console.Write("\t");
+                for(var j = 0; j < Map.Columns; j++)
+                {
+                    if(Map.Grid[ i, j ] != null && Map.Grid[ i, j ].IsSpawnPoint)
+                        Console.Write("S ");
+                    else
+                        Console.Write(". ");
+                }
 
-        /// <summary>
-        ///     Invalidates the map.
-        ///     TODO: Make ClearMap produce a valid Map
-        /// </summary>
-        private void ClearMap()
-        {
-            Map.Fill(null);
+                Console.WriteLine();
+            }
+
+            Console.WriteLine("Transition tiles:");
+            for(var i = 0; i < Map.Rows; i++)
+            {
+                Console.Write("\t");
+                for(var j = 0; j < Map.Columns; j++)
+                {
+                    if(Map.Grid[ i, j ] != null && Map.Grid[ i, j ].IsTransitionSpot)
+                        Console.Write("T ");
+                    else
+                        Console.Write(". ");
+                }
+
+                Console.WriteLine();
+            }
         }
 
         [NotifyPropertyChangedInvocator]

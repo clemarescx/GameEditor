@@ -12,7 +12,7 @@ namespace GameEditor.ViewModels
     /// </summary>
     public class TileViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private string _creatureToSpawn;
+        private string _characterToSpawn;
         private string _destinationAreaName;
         private bool _isWalkable;
         private string _spriteName;
@@ -37,12 +37,12 @@ namespace GameEditor.ViewModels
             }
         }
 
-        public string CreatureToSpawn
+        public string CharacterToSpawn
         {
-            get => _creatureToSpawn;
+            get => _characterToSpawn;
             set
             {
-                _creatureToSpawn = value;
+                _characterToSpawn = value;
                 OnPropertyChanged();
             }
         }

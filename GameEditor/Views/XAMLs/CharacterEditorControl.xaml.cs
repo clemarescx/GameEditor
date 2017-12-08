@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -17,18 +18,24 @@ namespace GameEditor
     {
         private readonly string _applicationDirectory;
         private readonly string _characterssDirPath;
+        private Character _currentCharacter;
 
-        private Character _character;
+        public Character CurrentCharacter
+        {
+            get { return _currentCharacter; }
+            private set { _currentCharacter = value; }
+        }
 
         public CharacterEditorControl()
         {
+            CurrentCharacter = new Character();
             InitializeComponent();
 
             var currentDirPath = Assembly.GetExecutingAssembly().Location;
             _applicationDirectory = Path.GetDirectoryName(currentDirPath);
 
             if(_applicationDirectory != null)
-                _characterssDirPath = Path.Combine(_applicationDirectory, @"creatures\");
+                _characterssDirPath = Path.Combine(_applicationDirectory, @"characters\");
             Directory.CreateDirectory(_characterssDirPath);
 
             LoadDefaultCharacterData();
@@ -77,15 +84,16 @@ namespace GameEditor
         // Serialize Character to JSON
         private void BtnSaveChar(object sender, RoutedEventArgs e)
         {
-            _character.Name = TxtCreatureName.Text;
-            _character.Strength = (int)SldStrength.Value;
-            _character.Dexterity = (int)SldDexterity.Value;
-            _character.RaceIndex = CmbRace.SelectedIndex;
+            CurrentCharacter.Name = TxtCharacterName.Text;
+            CurrentCharacter.Strength = (int)SldStrength.Value;
+            CurrentCharacter.Dexterity = (int)SldDexterity.Value;
+            CurrentCharacter.RaceIndex = CmbRace.SelectedIndex;
+            CurrentCharacter.Inventory = new List<string>();
 
-            var jsonConvertCreature = JsonConvert.SerializeObject(_character);
+            var jsonConvertCharacter = JsonConvert.SerializeObject(CurrentCharacter);
 
             var saveFileDialog = new SaveFileDialog{
-                FileName = _character.Name + ".json",
+                FileName = CurrentCharacter.Name + ".json",
                 InitialDirectory = _characterssDirPath,
                 Filter = "JSON file (*.json)|*.json"
             };
@@ -94,7 +102,7 @@ namespace GameEditor
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, jsonConvertCreature);
+                    File.WriteAllText(saveFileDialog.FileName, jsonConvertCharacter);
                 }
                 catch(Exception ex)
                 {
@@ -116,27 +124,19 @@ namespace GameEditor
             if(openFileDialog.ShowDialog() != true)
                 return;
 
-            try
-            {
-                var jsonCreature = File.ReadAllText(openFileDialog.FileName);
-                _character = JsonConvert.DeserializeObject<Character>(jsonCreature);
+            var characterJson = File.ReadAllText(openFileDialog.FileName);
+            CurrentCharacter = JsonConvert.DeserializeObject<Character>(characterJson);
+            
+            TxtCharacterName.Text = CurrentCharacter.Name;
+            TxtHealthPoints.Text = CurrentCharacter.HealthPoints.ToString();
+            SldStrength.Value = CurrentCharacter.Strength;
+            SldDexterity.Value = CurrentCharacter.Dexterity;
+            CmbRace.SelectedIndex = CurrentCharacter.RaceIndex;
 
-                TxtCreatureName.Text = _character.Name;
-                TxtHealthPoints.Text = _character.HealthPoints.ToString();
-                SldStrength.Value = _character.Strength;
-                SldDexterity.Value = _character.Dexterity;
-                CmbRace.SelectedIndex = _character.RaceIndex;
+            var itemList = "";
+            foreach(var item in CurrentCharacter.Inventory) itemList += item + "\n";
 
-                var itemList = "";
-                foreach(var item in _character.Inventory) itemList += item + "\n";
-
-                TxtCreatureDetails.Text = itemList;
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Error: \n" + ex.Message);
-                throw;
-            }
+            TxtCharacterDetails.Text = itemList;
         }
 
         // Quick validation check for health points
@@ -149,7 +149,7 @@ namespace GameEditor
                 else
                 {
                     TxtHealthPoints.Foreground = Brushes.Black;
-                    _character.HealthPoints = hp;
+                    CurrentCharacter.HealthPoints = hp;
                 }
             }
         }

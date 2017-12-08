@@ -2,7 +2,7 @@
 
 namespace GameEditor.Models
 {
-	public struct Character
+	public class Character
 	{
 		public string Name{ get; set; }
 		public int HealthPoints{ get; set; }

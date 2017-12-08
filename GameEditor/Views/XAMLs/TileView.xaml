@@ -32,7 +32,7 @@
             <!--        <Image Name="SpawnSprite"-->
             <!--               VerticalAlignment="Top"-->
             <!--               HorizontalAlignment="Right"-->
-            <!--               Visibility="{Binding CreatureToSpawn}"-->
+            <!--               Visibility="{Binding CharacterToSpawn}"-->
             <!--               Source="../Resources/tiles/logic/spawn_player.png" />-->
             <!--        <Image Name="PortalSprite"-->
             <!--               VerticalAlignment="Top"-->

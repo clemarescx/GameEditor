@@ -23,8 +23,8 @@
             <StackPanel Name="StkPnlCharacterAttributes">
                 <DockPanel Margin="0,5">
                     <Label Content="_Name:"
-                           Target="{Binding ElementName=TxtCreatureName}" />
-                    <TextBox Name="TxtCreatureName"
+                           Target="{Binding ElementName=TxtCharacterName}" />
+                    <TextBox Name="TxtCharacterName"
                              TextWrapping="Wrap" />
                 </DockPanel>
                 <DockPanel Margin="0,5">
@@ -76,7 +76,7 @@
                     BorderBrush="Aquamarine"
                     BorderThickness="3"
                     Grid.Column="1">
-                <TextBlock Name="TxtCreatureDetails"
+                <TextBlock Name="TxtCharacterDetails"
                            Background="LightGray"
                            Margin="20" />
             </Border>
