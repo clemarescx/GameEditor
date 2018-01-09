@@ -179,6 +179,8 @@ namespace GameEditor.ViewModels
                 }
             }
 
+            
+            
             Map = debugMap;
         }
 
