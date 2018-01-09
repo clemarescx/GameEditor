@@ -1,0 +1,3 @@
+# GameEditor
+A campaign editor in C# and the WPF framework for an arbitrary Zelda-like game for creating a topdown adventure game.
+Very much WIP...
